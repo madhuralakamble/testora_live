@@ -1,6 +1,7 @@
 Flask
-Flask-MySQLdb
-Flask-Cors
-Flask-Login
-bcrypt
 gunicorn
+bcrypt
+flask-cors
+flask-mysqldb
+python-dotenv
+pandas
