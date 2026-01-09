@@ -35,6 +35,8 @@ This project is developed as a **Final Year / Academic Project** using **Python 
 
 Login Page
 
+![Screenshot 1](screenshots/login1.jpg)
+
 Admin Dashboard
 
 Student Dashboard
