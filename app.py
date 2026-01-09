@@ -27,6 +27,11 @@ from datetime import datetime, timedelta, timezone
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
+import os
+print("Templates folder:", app.template_folder)
+print("Files in templates:", os.listdir(app.template_folder))
+
+
 def get_db_connection():
     """
     Returns a new PostgreSQL connection using environment variables.
