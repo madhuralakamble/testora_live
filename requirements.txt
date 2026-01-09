@@ -1,9 +1,10 @@
 Flask
 gunicorn
-bcrypt
 flask-cors
 flask-mysqldb
+bcrypt
 python-dotenv
 pandas
 reportlab
-
+flask-mail
+mysqlclient
