@@ -7,4 +7,4 @@ python-dotenv
 pandas
 reportlab
 flask-mail
-mysqlclient
+psycopg2-binary
