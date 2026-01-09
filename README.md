@@ -31,6 +31,18 @@ This project is developed as a **Final Year / Academic Project** using **Python 
 
 ### Result visualization using charts
 
+##  📸 Screenshots
+
+Login Page
+
+Admin Dashboard
+
+Student Dashboard
+
+Exam Interface
+
+Result Page
+
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
