@@ -1,7 +1,6 @@
 Flask
 gunicorn
 flask-cors
-flask-mysqldb
 bcrypt
 python-dotenv
 pandas
