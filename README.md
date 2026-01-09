@@ -1,4 +1,4 @@
-🎓 Testora – An Online Examination System
+# 🎓 Testora – An Online Examination System
 
 Testora is a web-based **Online Examination System** designed to conduct, manage, and evaluate exams efficiently.  
 It provides separate dashboards for **Admin, Teachers** and **Students**, ensuring a secure and user-friendly examination experience.
@@ -27,23 +27,43 @@ This project is developed as a **Final Year / Academic Project** using **Python 
 - Session-based access control
 - Role-based dashboards (Admin / Student)
 
-### Full-screen secure exam mode
+### 🖥️ Full-screen secure exam mode
 
-### Result visualization using charts
+### 📊 Result visualization using charts
 
 ##  📸 Screenshots
 
-Login Page
+### Home Page
+
+![Screenshot 1](screenshots/homepage1.png)
+![Screenshot 1](screenshots/homepage2.png)
+![Screenshot 1](screenshots/homepage3.png)
+
+### Register Page
 
 ![Screenshot 1](screenshots/login1.jpg)
 
-Admin Dashboard
+### Login Page
 
-Student Dashboard
+![Screenshot 1](screenshots/login2.jpg)
 
-Exam Interface
+### Admin Dashboard
 
-Result Page
+![Screenshot 1](screenshots/admindashboard.png)
+![Screenshot 1](screenshots/admindashboard1.png)
+
+### Student Dashboard
+
+![Screenshot 1](screenshots/studentdashboard.png)
+
+### Teacher Dashboard
+
+![Screenshot 1](screenshots/teacherdashboard.png)
+
+### Exam Interface
+
+![Screenshot 1](screenshots/exampage.png)
+
 
 ## 🛠️ Tech Stack
 
