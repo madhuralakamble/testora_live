@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Dashboard - Testora</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+/* Animated background gradient waves for dashboard */
+body {
+  background: radial-gradient(circle at top left, #3b82f6, #9333ea, #111);
+  background-size: 300% 300%;
+  animation: bgWave 15s ease infinite;
+}
+@keyframes bgWave {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+.gradient-hover {
+      background-image: linear-gradient(90deg, rgb(90, 21, 146), #9333ea, #6a2abd);
+      background-size: 200% auto;
+      transition: background-position 0.5s, color 0.5s;
+    }
+.gradient-hover:hover {
+      background-position: right center;
+      color: white;
+    }
+
+header {
+      background: white;
+      box-shadow: 0 3px 12px rgba(184,16,250,0.473);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .header-container {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 14px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .logo img {
+      height: 75px;
+      width: auto;
+    }
+    .logo span {
+      font-family: 'Poppins', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #5f0494;
+    }
+    nav a {
+      font-weight: 600;
+      font-size: 1rem;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      width: 0%;
+      height: 2px;
+      background: #6c3dc7;
+      transition: 0.3s ease;
+      transform: translateX(-50%);
+    }
+    nav a:hover::after {
+      width: 60%;
+    }
+
+    /* Footer */
+    footer {
+      max-width: 960px;
+      margin: 100px auto 40px auto;
+      text-align: center;
+      color: #a39dc0;
+      font-size: 0.95rem;
+      position: relative;
+      z-index: 5;
+    }
+    .footer-social {
+      margin-top: 20px;
+      font-size: 2rem;
+    }
+    .footer-social a {
+      margin: 0 14px;
+      color: #6b3cc6;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+/* Sidebar styles */
+.dashboard-sidebar {
+  background: #181337;
+  color: #fff;
+  min-height: 100vh;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 0 16px #8316ea22;
+}
+.dashboard-sidebar nav a {
+  display: block;
+  font-weight: 600;
+  font-size: 1.08rem;
+  padding: 0.8rem 1.2rem;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+}
+.dashboard-sidebar nav a:hover, 
+.dashboard-sidebar nav .active {
+  background: linear-gradient(92deg, #6c3c96 0%, #7e49af 100%);
+  color: #fff !important;
+  transform: scale(1.05);
+}
+/* Avatar box */
+.sidebar-avatar-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.sidebar-avatar-box img {
+  width: 100px;
+  height: 100px;
+  border-radius: 9999px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 12px #9165ed66;
+}
+.sidebar-avatar-box .role {
+  color: #c6a5e7;
+  font-weight: 500;
+  font-size: 1.2rem;
+}
+
+/* Dashboard header */
+.dashboard-header {
+  background: white;
+  box-shadow: 0 3px 12px rgba(184, 16, 250, 0.23);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 16px 38px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dashboard-header .logo img {
+  height: 57px;
+  width: auto;
+  margin-right: 12px;
+}
+.dashboard-header .logo span {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #5f0494;
+}
+
+/* Main dashboard area */
+.dashboard-main {
+  padding: 2.5rem;
+  margin: 50px auto 50px auto;  /* Top margin 100px pushes content below header */
+  background: white;
+  box-shadow: 0 8px 42px #b173f04f;
+  border-radius: 2.2rem;
+  max-width: 1500px;
+  min-height: 65vh;
+  position: relative;
+  z-index: 10;
+}
+
+.dashboard-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 2.6rem;
+  color: #111;
+  letter-spacing: 0.10rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+.dashboard-card-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 2.2rem;
+  margin-bottom: 2.6rem;
+  justify-content: center;
+}
+.dashboard-card {
+  border-radius: 1.4rem;
+  box-shadow: 0 4px 16px #8b5cf64a;
+  padding: 2rem 1.5rem;
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+.dashboard-card:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 15px 35px rgba(99, 51, 255, 0.55);
+}
+.card-blue {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+} /* Strong royal blue to navy */
+
+.card-purple {
+  background: linear-gradient(135deg, #d946ef 0%, #a21caf 100%);
+} /* Bright magenta pink to deep purple */
+
+.card-green {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+} /* Fresh green shades */
+
+.card-pinkred {
+  background: linear-gradient(135deg, #f43f5e 0%, #ec4899 100%);
+} /* Reddish-pink gradient */
+
+.card-yellowish{
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+} /* yellowish gradient */
+
+.dashboard-card .icon {font-size: 1.45rem; margin-bottom: .4rem;}
+.dashboard-card .label {font-size: 1.11rem; margin-bottom: 0.6rem;}
+.dashboard-card .value {font-size: 2.6rem; font-weight: 800;}
+
+/* Sidebar navigation links hover animation */
+.dashboard-sidebar nav a {
+  transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.3s ease;
+}
+.dashboard-sidebar nav a:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(99, 51, 255, 0.7);
+  background: linear-gradient(92deg, #6c3c96 0%, #7e49af 100%);
+  color: #fff !important;
+  z-index: 1;
+}
+
+/* Logout button hover animation */
+header button {
+  background: linear-gradient(90deg, #6c3c96, #a97fff);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  transition: background-position 0.4s ease, transform 0.25s ease, box-shadow 0.4s ease;
+  background-size: 200% auto;
+  box-shadow: 0 6px 12px rgba(147, 104, 233, 0.6);
+}
+
+header button:hover {
+  background-position: right center;
+  transform: scale(1.08);
+  box-shadow: 0 10px 20px rgba(166, 120, 222, 0.9);
+  background: linear-gradient(90deg, #7e49af, #6c3c96);
+}
+
+/* Smooth active sidebar link scale */
+.dashboard-sidebar nav a.active {
+  transform: scale(1.07);
+  box-shadow: 0 10px 22px rgba(99, 51, 255, 0.75);
+  background: linear-gradient(92deg, #7e49af 0%, #6c3c96 100%);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .dashboard-main {
+    padding: 1.3rem;
+    max-width: 98vw;
+  }
+  .dashboard-title {
+    font-size: 2rem;
+  }
+  .dashboard-card-row {
+    gap: 1.3rem;
+  }
+}
+@media (max-width: 650px) {
+  .dashboard-main {
+    padding: .7rem;
+    border-radius: 18px;
+  }
+  .dashboard-title {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+}
+  @keyframes wave {
+      from { background-position-x: 0; }
+      to { background-position-x: 1000px; }
+    }
+    @keyframes shimmer {
+      to { background-position: 200% center; }
+    }
+@keyframes floatSlow {
+  0%   { transform: translateY(0) scale(1); opacity: 0.18; }
+  50%  { transform: translateY(-80px) scale(1.13); opacity: 0.32;}
+  100% { transform: translateY(0) scale(1); opacity: 0.18;}
+}
+@keyframes floatSlower {
+  0%   { transform: translateY(0) scale(1); opacity: 0.13; }
+  50%  { transform: translateY(-110px) scale(1.19); opacity: 0.35;}
+  100% { transform: translateY(0) scale(1); opacity: 0.13;}
+}
+@keyframes floatSlowest {
+  0%   { transform: translateY(0) scale(1); opacity: 0.13; }
+  50%  { transform: translateY(-180px) scale(1.28); opacity: 0.39;}
+  100% { transform: translateY(0) scale(1); opacity: 0.13;}
+}
+.float-slow    { animation: floatSlow 9s ease-in-out infinite; }
+.float-slower  { animation: floatSlower 13s ease-in-out infinite;}
+.float-slowest { animation: floatSlowest 18s ease-in-out infinite;}
+
+
+#profile-view {
+  max-width: 1400px;
+  padding: 40px 50px;
+  font-size: x-large;
+}
+
+#profile-view > div:nth-child(2) {
+  padding-left: 40px;
+}
+
+.exam-table,
+.custom-results-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 6px 32px #a78bfa22;
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+}
+
+.exam-table thead tr,
+.custom-results-table thead tr {
+  background: #8b5cf6;
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+.exam-table th,
+.custom-results-table th {
+  padding: 12px 18px;
+  font-weight: bold;
+  border-right: 2px solid #fff;
+  border-bottom: none;
+}
+
+.exam-table th:last-child,
+.custom-results-table th:last-child {
+  border-right: none;
+}
+
+.exam-table tbody tr,
+.custom-results-table tbody tr {
+  background: #f3f0fd;
+  transition: background 0.2s;
+}
+
+.exam-table tbody tr:nth-child(even),
+.custom-results-table tbody tr:nth-child(even) {
+  background: #ede9fe;
+}
+
+.exam-table td,
+.custom-results-table td {
+  padding: 11px 15px;
+  border-bottom: 1px solid #e7ddfb;
+  color: #3c2186;
+  font-size: 1rem;
+}
+
+.exam-table tbody tr:hover,
+.custom-results-table tbody tr:hover {
+  background: #e9d5ff;
+}
+
+.btn,
+.exam-table button,
+.custom-results-table button {
+  font-size: 0.95rem;
+  padding: 7px 20px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 2px 8px #a78bfa28;
+}
+
+.btn[disabled],
+.exam-table button[disabled],
+.custom-results-table button[disabled] {
+  background: #cccccc;
+  color: #888988;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-success,
+.exam-table .btn-success,
+.custom-results-table .btn-success {
+  background: #22c55e;
+  color: #fff;
+}
+
+.btn-primary,
+.exam-table .btn-primary,
+.custom-results-table .btn-primary {
+  background: #6d28d9;
+  color: #fff;
+}
+
+  </style>
+</head>
+<body>
+  <!-- Floating Circles Background -->
+  <div class="fixed rounded-full bg-white float-slow opacity-10" style="width:90px;height:90px;top:9vh;left:10vw;"></div>
+  <div class="fixed rounded-full bg-white float-slower opacity-10" style="width:120px;height:120px;top:4vh;left:82vw;"></div>
+  <div class="fixed rounded-full bg-white float-slowest opacity-10" style="width:200px;height:200px;top:66vh;left:68vw;"></div>
+  <div class="fixed rounded-full bg-purple-200 float-slower opacity-10" style="width:110px;height:110px;top:80vh;left:25vw;"></div>
+  <div class="fixed rounded-full bg-white float-slowest opacity-10" style="width:200px;height:200px;top:60vh;left:95vw;"></div>
+  <div class="fixed rounded-full bg-white float-slow opacity-10" style="width:100px;height:100px;top:19vh;left:40vw;"></div>
+  <!-- Navbar -->
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Testora Logo"
+          class="mx-auto rounded-full shadow-lg" />
+        <span>Testora</span>
+      </div>
+      <a href="{{ url_for('logout') }}">
+      <button class="bg-red-600 text-white px-5 py-2 rounded hover:bg-red-700 transition">Logout</button>
+      </a>
+    </header>
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar w-64 flex-shrink-0">
+      <div class="sidebar-avatar-box">
+       <img src="{{ user.student_url }}" alt="Student Avatar" />
+        <div class="font-bold text-lg">{{ user.username }}</div>
+        <div class="role">{{ user.role|capitalize }}</div>
+      </div>
+      <nav>
+          <a href="#" class="active" onclick="switchTab('dashboard', event)">Dashboard</a>
+          <a href="#" onclick="switchTab('exams', event)">Exam Section</a>
+          <a href="#" onclick="switchTab('results', event)">Results</a>
+          <a href="#" onclick="switchTab('edit-profile', event)">Edit Profile</a>
+</nav>
+    </aside>
+    <!-- Main Dashboard Area -->
+    <main class="dashboard-main flex-1">
+
+       <div id="dashboard" class="tab-content" style="display: block;">
+      <h1 class="dashboard-title">Student Dashboard</h1>
+      <div class="dashboard-card-row">
+         
+  <div class="dashboard-card card-purple">
+    <span class="icon">📋</span>
+    <div class="label">Assigned Exams</div>
+    <div class="value" id="assignedExamsCount">0</div>
+  </div>
+  <div class="dashboard-card card-yellowish">
+    <span class="icon">⏳</span>
+    <div class="label">Pending Exams</div>
+    <div class="value" id="pendingExamsCount">0</div>
+  </div>
+  <div class="dashboard-card card-blue">
+    <span class="icon">✅</span>
+    <div class="label">Completed Exams</div>
+    <div class="value" id="completedExamsCount">0</div>
+  </div>
+  <div class="dashboard-card card-green">
+    <span class="icon">📅</span>
+    <div class="label">Upcoming Exams</div>
+    <div class="value" id="upcomingExamsCount">0</div>
+  </div>
+</div>
+</div>
+   
+
+      <!-- exam management interface here -->
+<div id="exams" class="tab-content" style="display: none;">
+      <h1 class="dashboard-title">Exam Section</h1>
+  <table class="min-w-full bg-white rounded-lg overflow-hidden border border-gray-300">
+    <thead class="bg-purple-700 text-white border-b border-purple-900">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Title</th>
+        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Subject</th>
+        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Date</th>
+        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Duration</th>
+        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Status</th>
+        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Action</th>
+      </tr>
+    </thead>
+    <tbody id="examsTableBody">
+      <!-- Will be filled dynamically -->
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+  <div id="results" class="tab-content" style="display: none;">
+    <h1 class="dashboard-title">Results</h1>
+
+    <!--filter/search input  -->
+<div style="margin-bottom:14px;">
+  <input type="text" id="examSearchInput"
+         placeholder="Search exam..."
+         style="padding:8px; border-radius:6px; border:1px solid #aaa; min-width:220px;">
+
+    <button onclick="exportResults()" class="btn btn-success" style="margin-bottom:15px;">Email Results</button>
+    <button 
+  id="openChartBtn" 
+  class="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400">
+  Show My Progress
+</button>
+
+  </div>
+<table class="custom-results-table">
+  <thead>
+    <tr>
+      <th>Exam</th>
+      <th>Score</th>
+      <th>Date Completed</th>
+      <th>View Paper</th>
+      <th>Download Report</th>
+    </tr>
+  </thead>
+  <tbody id="examResultsBody"></tbody>
+</table>
+
+
+
+    <div id="paper-review" style="display:none;">
+    <h3>Exam Paper</h3>
+    <div id="questions-list"></div>
+    <button onclick="closePaperReview()">Close</button>
+</div>
+<!-- Modal backdrop -->
+<div id="chartModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
+  <!-- Modal content -->
+  <div class="bg-white rounded-lg shadow-lg p-6 w-96 max-w-full">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold">Progress Chart</h2>
+      <button id="closeChartBtn" class="text-gray-500 hover:text-gray-700 font-bold">&times;</button>
+    </div>
+    <!-- Canvas to draw the chart -->
+    <canvas id="progressChart" width="400" height="300"></canvas>
+  </div>
+</div>
+
+  </div>
+
+
+
+  
+<div id="edit-profile" class="tab-content" style="display: none; max-width: 1100px; margin: 10px auto; background: white; padding: 20px; border-radius: 10px; color: black;">
+  <h1 class="dashboard-title">Edit Profile</h1>
+
+<!-- Profile view mode with box -->
+<div id="student-profile-view" 
+  style="
+    max-width: 1100px; 
+    width: 100%;
+    margin-left: 0;
+    display: flex; 
+    gap: 40px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    box-sizing: border-box; /* important for padding */
+  ">
+  <div style="flex-shrink: 0; display: flex; flex-direction: column; align-items: center;">
+    <img id="student-view-profile-picture" src="/static/student icon.png" alt="Profile Picture"
+      style="width: 175px; height: 175px; border-radius: 50%; object-fit: cover; border: 4px solid #a78bfa; margin-bottom: 24px;">
+  </div>
+
+  <div style="flex-grow: 1; padding-left: 10px;">
+    <div style="margin-bottom: 32px;">
+      <div style="font-size: 2rem; font-weight: 800; letter-spacing: 1px; color: #561c8b;">Full Name: <span id="student-view_full_name"></span></div>
+      <div style="font-size: 1.5rem; font-weight: 600; color: #444; margin-top: 14px;">Username: <span id="student-view_username"></span></div>
+    </div>
+
+    <div style="font-size: 1.4rem; line-height: 2.4; color: #222; letter-spacing: .05em;">
+      <div><b>Email:</b> <span id="student-view_email"></span></div>
+      <div><b>Alternate Email:</b> <span id="student-view_alt_email"></span></div>
+      <div><b>Phone:</b> <span id="student-view_phone"></span></div>
+      <div><b>Date of Birth:</b> <span id="student-view_dob"></span></div>
+      <div><b>Gender:</b> <span id="student-view_gender"></span></div>
+      <div><b>Street:</b> <span id="student-view_street"></span></div>
+      <div><b>City:</b> <span id="student-view_city"></span></div>
+      <div><b>State:</b> <span id="student-view_state"></span></div>
+      <div><b>Zip:</b> <span id="student-view_zip"></span></div>
+      <div><b>Country:</b> <span id="student-view_country"></span></div>
+      <div><b>Course:</b> <span id="student-view_course"></span></div>
+      <div><b>Year/Semester:</b> <span id="student-view_year_semester"></span></div>
+      <div><b>Roll Number:</b> <span id="student-view_roll_no"></span></div>
+      <div><b>Department:</b> <span id="student-view_department_student"></span></div>
+    </div>
+
+    <div style="margin-top: 36px; text-align: left;">
+      <button id="student-editBtn" style="font-size: 1.5rem; padding: 16px 44px; background-color: #6a2abd; color: white; border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 3px 14px #a78bfa55;">Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Profile edit mode -->
+<form id="student-profile-edit" style="display: none; max-width: 700px; margin: 20px auto 0; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background: white;" enctype="multipart/form-data" >
+  <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 20px; color: #561c8b;">Edit Profile</h2>
+
+  <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+    <img id="student-edit-profile-picture-preview" src="/static/student icon.png" alt="Profile Picture Preview"
+      style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid #6a2abd;">
+    <input type="file" id="student-edit-profile-picture" name="profile_picture" accept="image/*"
+      style="padding: 6px; border-radius: 5px; border: 1px solid #ccc;"/>
+  </div>
+  <div id="image_error" style="color: red; font-weight: 600; margin-top: 5px;"></div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="student-edit_username" style="font-weight: 600; display: block; margin-bottom: 6px;">Username (Readonly):</label>
+    <input type="text" id="student-edit_username" name="username" readonly
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; background: #f0f0f0;"/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_full_name" style="font-weight: 600; display: block; margin-bottom: 6px;">Full Name:</label>
+    <input type="text" id="student-edit_full_name" name="full_name" required
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_dob" style="font-weight: 600; display: block; margin-bottom: 6px;">Date of Birth:</label>
+    <input type="date" id="student-edit_dob" name="dob" required
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_gender" style="font-weight: 600; display: block; margin-bottom: 6px;">Gender:</label>
+    <select id="student-edit_gender" name="gender" required
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+      <option value="" disabled>Select Gender</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_email" style="font-weight: 600; display: block; margin-bottom: 6px;">Email (Readonly):</label>
+    <input type="email" id="student-edit_email" name="email" readonly
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; background: #f0f0f0;"/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_alt_email" style="font-weight: 600; display: block; margin-bottom: 6px;">Alternate Email:</label>
+    <input type="email" id="student-edit_alt_email" name="alt_email"
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_phone" style="font-weight: 600; display: block; margin-bottom: 6px;">Phone:</label>
+    <input type="text" id="student-edit_phone" name="phone"
+      pattern="^\d{10}$" maxlength="10" minlength="10"
+      title="Phone number must be exactly 10 digits"
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_street" style="font-weight: 600; display: block; margin-bottom: 6px;">Street:</label>
+    <input type="text" id="student-edit_street" name="street"
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_city" style="font-weight: 600; display: block; margin-bottom: 6px;">City:</label>
+    <input type="text" id="student-edit_city" name="city"
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_state" style="font-weight: 600; display: block; margin-bottom: 6px;">State:</label>
+    <input type="text" id="student-edit_state" name="state"
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_zip" style="font-weight: 600; display: block; margin-bottom: 6px;">Zip:</label>
+    <input type="text" id="student-edit_zip" name="zip"
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+  <label for="edit_country" style="font-weight: 600; display: block; margin-bottom: 6px;">Country:</label>
+  <select id="student-edit_country" name="country" required
+    style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+    <option value="" disabled selected>Select your country</option>
+    <option value="usa">United States</option>
+    <option value="canada">Canada</option>
+    <option value="uk">United Kingdom</option>
+    <option value="india">India</option>
+   
+  </select>
+</div>
+<div style="margin-bottom: 10px;">
+ <label for="edit_course" style="font-weight: 600; display: block; margin-bottom: 6px;">Course:</label>
+    <input type="text" id="student-edit_course" name="course" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+  </div>
+<div style="margin-bottom: 10px;">
+    <label for="edit_year_semester" style="font-weight: 600; display: block; margin-bottom: 6px;">Year/Semester:</label>
+    <input type="text" id="student-edit_year_semester" name="year_semester" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+  </div>
+<div style="margin-bottom: 10px;">
+    <label for="edit_roll_no" style="font-weight: 600; display: block; margin-bottom: 6px;">Roll Number:</label>
+    <input type="text" id="student-edit_roll_no" name="roll_no" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+  </div>
+<div style="margin-bottom: 10px;">
+    <label for="edit_department_student" style="font-weight: 600; display: block; margin-bottom: 6px;">Department:</label>
+    <input type="text" id="student-edit_department_student" name="department_student" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+  </div>
+
+
+
+
+  <div style="margin-top: 15px;">
+    <button type="submit"
+      style="background-color: #16a34a; color: white; padding: 12px 24px; border:none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1rem;">Save</button>
+    <button type="button" id="student-cancelBtn"
+      style="margin-left: 12px; background-color: #9ca3af; color: white; padding: 12px 24px; border:none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1rem;">Cancel</button>
+  </div>
+
+  <div id="student-message" style="margin-top: 15px; color: red; font-weight: bold;"></div>
+</form>
+
+
+
+
+
+  
+
+</div>
+ 
+      <div class="bg-gray-200 rounded-md py-3 px-6 mt-16 text-center font-semibold text-xl text-gray-700 shadow">
+        Online Examination System
+      </div>
+        </main>
+  </div>
+ 
+  <!-- Footer -->
+  <footer class="py-8 px-8 text-center bg-black/30 backdrop-blur-md">
+    <p class="mb-4">© 2025 Testora. All rights reserved.</p>
+    <div class="flex justify-center space-x-8 mt-4">
+      <a href="https://facebook.com" target="_blank" class="hover:text-blue-500 transition" aria-label="Facebook">
+        <!-- Facebook SVG -->
+        <svg fill="currentColor" viewBox="0 0 24 24" class="w-7 h-7"><path d="M22 12.07C22 6.49 17.52 2 12 2S2 6.49 2 12.07c0 5.02 3.66 9.18 8.44 9.93v-7.03H7.89v-2.9h2.55v-2.21c0-2.52 1.5-3.9 3.8-3.9 1.1 0 2.25.2 2.25.2v2.46h-1.27c-1.25 0-1.67.78-1.67 1.57v1.87h2.83l-.45 2.9h-2.38v7.03C18.34 21.25 22 17.09 22 12.07z"/></svg>
+      </a>
+      <a href="https://instagram.com" target="_blank" class="hover:text-pink-500 transition" aria-label="Instagram">
+        <!-- Instagram SVG -->
+        <svg fill="currentColor" viewBox="0 0 24 24" class="w-7 h-7"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm4.25 2.7a5.05 5.05 0 1 1 0 10.1 5.05 5.05 0 0 1 0-10.1zm0 1.5a3.55 3.55 0 1 0 0 7.1 3.55 3.55 0 0 0 0-7.1zm5.1.6a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+      </a>
+      <a href="https://linkedin.com" target="_blank" class="hover:text-blue-700 transition" aria-label="LinkedIn">
+        <!-- LinkedIn SVG -->
+        <svg fill="currentColor" viewBox="0 0 24 24" class="w-7 h-7"><path d="M19 0h-14a5 5 0 0 0-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11.07 20h-2.87V9h2.87v11zm-1.43-12.26c-.92 0-1.66-.75-1.66-1.66 0-.92.75-1.66 1.66-1.66.92 0 1.66.75 1.66 1.66 0 .91-.75 1.66-1.66 1.66zm14.57 12.26h-2.87v-5.5c0-1.31-.02-3-1.87-3-1.87 0-2.16 1.46-2.16 2.89v5.61h-2.87V9h2.76v1.5h.04c.39-.75 1.39-1.55 2.88-1.55 3.08 0 3.65 2.03 3.65 4.67v6.38z"/></svg>
+      </a>
+    </div>
+  </footer>
+</body>
+<script>
+  function switchTab(tabId, evt) {
+  const tabContents = document.querySelectorAll('.tab-content');
+  tabContents.forEach(tc => tc.style.display = 'none');
+
+  const links = document.querySelectorAll('.dashboard-sidebar nav a');
+  links.forEach(link => link.classList.remove('active'));
+
+  const selectedTab = document.getElementById(tabId);
+  if (selectedTab) selectedTab.style.display = 'block';
+  evt.currentTarget.classList.add('active');
+
+  // Load data based on tab
+  if (tabId === 'dashboard' && typeof loadDashboardSummary === 'function') {
+    loadDashboardSummary();
+  } else if (tabId === 'exams' && typeof loadExams === 'function') {
+    loadExams();
+  } else if (tabId === 'results' && typeof loadResults === 'function') {
+    loadResults();
+  } else if (tabId === 'edit-profile' && typeof loadProfile === 'function') {
+    loadProfile();
+  }
+}
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Load dashboard summary stats on page load
+  loadDashboardSummary();
+});
+
+function loadDashboardSummary() {
+    fetch('/api/student/dashboard_summary')
+        .then(resp => resp.json())
+        .then(data => {
+            document.getElementById('assignedExamsCount').textContent = data.assignedExams || '0';
+            document.getElementById('pendingExamsCount').textContent = data.pendingExams || '0';
+            document.getElementById('completedExamsCount').textContent = data.completedExams || '0';
+            document.getElementById('upcomingExamsCount').textContent = data.upcomingExams || '0';
+        })
+        .catch(err => {
+            console.error('Failed to load dashboard summary:', err);
+        });
+}
+
+</script>
+<script>
+ // Fetch exam results and render the table
+let allResults = [];
+
+function loadResults() {
+  fetch('/api/student/results')
+    .then(res => res.json())
+    .then(data => {
+      allResults = data;
+      renderResultsTable(data);
+    });
+}
+
+function renderResultsTable(data) {
+  const tbody = document.getElementById('examResultsBody');
+  tbody.innerHTML = '';
+  data.forEach(result => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${result.exam_name}</td>
+        <td>${result.score}</td>
+        <td>${result.completed_at}</td>
+        <td>
+        <button class="btn btn-primary" onclick="viewPaper(${result.attempt_id})">View</button>
+
+        </td>
+        <td>
+        <button class="btn btn-success" onclick="downloadReport(${result.attempt_id})">Download</button>
+
+        </td>
+      </tr>
+    `;
+  });
+}
+
+// Live search/filter handler for the input box
+document.addEventListener('DOMContentLoaded', function () {
+  loadResults();
+  document.getElementById('examSearchInput').addEventListener('input', function () {
+    const keyword = this.value.toLowerCase();
+    renderResultsTable(allResults.filter(
+      r => r.exam_name.toLowerCase().includes(keyword)
+    ));
+  });
+});
+
+
+function viewPaper(attemptId) {
+  fetch(`/student/exam_review/${attemptId}`)
+     .then(res => {
+    if (!res.ok) throw new Error('Failed to fetch exam review: ' + res.status);
+    return res.json();
+  })
+    .then(data => {
+      // Show grading status at top
+      const gradingStatusText = 
+        data.grading_status === 'completed' ? "Status: Graded" : "Status: Pending Grading";
+
+      let list = `<h3>${gradingStatusText}</h3>`;
+      
+      // Map questions to HTML
+      list += data.questions.map(item => {
+        return `<div style="margin-bottom: 15px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+          <strong>Q:</strong> ${item.question_text}<br>
+          <strong>Your Answer:</strong> ${item.student_answer}<br>
+          <strong>Correct Answer:</strong> ${item.correct_answer}<br>
+          <strong>Marks Given:</strong> ${item.marks_awarded} / ${item.max_marks}
+        </div>`;
+      }).join('');
+
+      document.getElementById('questions-list').innerHTML = list;
+      document.getElementById('paper-review').style.display = 'block';
+      
+    });
+    
+}
+
+
+function closePaperReview() {
+  document.getElementById('paper-review').style.display = 'none';
+}
+
+function downloadReport(attemptId) {
+  window.open(`/api/exam_attempt_report/${attemptId}/report`, '_blank');
+}
+
+function showProgressChart() {
+  fetch('/api/student/results')
+    .then(res => res.json())
+    .then(data => {
+      const ctx = document.getElementById('progressChart').getContext('2d');
+      const labels = data.map(r => r.exam_name);
+      const scores = data.map(r => r.score);
+      new Chart(ctx, {
+        type: 'bar',
+        data: { labels, datasets: [{label: 'Score', data: scores}] }
+      });
+    });
+    
+}
+document.getElementById('openChartBtn').addEventListener('click', () => {
+  document.getElementById('chartModal').classList.remove('hidden');
+  showProgressChart();  // Call your existing chart rendering function here
+});
+
+document.getElementById('closeChartBtn').addEventListener('click', () => {
+  document.getElementById('chartModal').classList.add('hidden');
+});
+
+
+function exportResults() {
+  fetch('/api/student/export', {method: 'POST'})
+    .then(res => res.json())
+    .then(data => alert('Report Emailed Successfully !'));
+}
+
+</script>
+<script>
+  async function loadExams() {
+    try {
+      const res = await fetch('/api/student/exam_assignments');
+      if (!res.ok) throw new Error('Failed to load exams');
+      const assignments = await res.json();
+      const tbody = document.getElementById('examsTableBody');
+      tbody.innerHTML = '';
+      for (let assignment of assignments) {
+        // Enable Start button when assignment.status is 'Ongoing'
+        const isClickable = (assignment.status || '').toLowerCase() === 'ongoing';
+
+        let actionHtml = '';
+        if (isClickable && assignment.link_token) {
+          actionHtml = `<button onclick="startExam(${assignment.exam_id}, '${assignment.link_token}')" class="bg-green-500 text-white px-3 py-1 rounded">Start</button>`;
+        } else if (isClickable) {
+          // fallback: if no token present, still show disabled until token exists
+          actionHtml = `<button disabled class="bg-gray-400 text-white px-3 py-1 rounded cursor-not-allowed" title="Exam not ready">Start</button>`;
+        } else {
+          actionHtml = `<button disabled class="bg-gray-400 text-white px-3 py-1 rounded cursor-not-allowed" title="Exam not open">Start</button>`;
+        }
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${assignment.title}</td>
+            <td>${assignment.subject}</td>
+            <td>${assignment.date}</td>
+            <td>${assignment.duration} min</td>
+            <td>${assignment.status}</td>
+            <td>${actionHtml}</td>
+          </tr>
+        `;
+      }
+    } catch (err) {
+      console.error("Failed to load exams:", err);
+      document.getElementById('examsTableBody').innerHTML = '<tr><td colspan="6">Failed to load exams.</td></tr>';
+    }
+  }
+  // startExam now receives the token directly
+  function startExam(examId, linkToken) {
+    if (!linkToken) {
+      alert('Exam link/token not available. Please contact the administrator.');
+      return;
+    }
+    // Directly navigate to the exam start route (no access-code/check)
+    window.location.href = `/exam/start/${examId}/${linkToken}`;
+  }
+  // call loadExams when appropriate (already present in your code)
+  // loadExams();
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const viewDiv = document.getElementById('student-profile-view');
+    const editForm = document.getElementById('student-profile-edit');
+    const message = document.getElementById('student-message');
+
+    async function fetchProfile() {
+        try {
+            const res = await fetch('/api/student/get_profile');
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+
+            // populate view fields
+            document.getElementById('student-view_full_name').innerText = data.full_name || '';
+            document.getElementById('student-view_username').innerText = data.username || '';
+            document.getElementById('student-view_email').innerText = data.email || '';
+            document.getElementById('student-view_alt_email').innerText = data.alt_email || '';
+            document.getElementById('student-view_phone').innerText = data.phone || '';
+            document.getElementById('student-view_dob').innerText = data.dob || '';
+            document.getElementById('student-view_gender').innerText = data.gender || '';
+            document.getElementById('student-view_street').innerText = data.street || '';
+            document.getElementById('student-view_city').innerText = data.city || '';
+            document.getElementById('student-view_state').innerText = data.state || '';
+            document.getElementById('student-view_zip').innerText = data.zip || '';
+            document.getElementById('student-view_country').innerText = data.country || '';
+            document.getElementById('student-view_course').innerText = data.course || '';
+            document.getElementById('student-view_year_semester').innerText = data.year_semester || '';
+            document.getElementById('student-view_roll_no').innerText = data.roll_no || '';
+            document.getElementById('student-view_department_student').innerText = data.department_student || '';
+
+            document.getElementById('student-view-profile-picture').src = data.profile_picture_url || '/static/student icon.png';
+
+            // populate edit fields
+            document.getElementById('student-edit_full_name').value = data.full_name || '';
+            document.getElementById('student-edit_username').value = data.username || '';
+            document.getElementById('student-edit_email').value = data.email || '';
+            document.getElementById('student-edit_alt_email').value = data.alt_email || '';
+            document.getElementById('student-edit_phone').value = data.phone || '';
+            document.getElementById('student-edit_dob').value = data.dob || '';
+            document.getElementById('student-edit_gender').value = data.gender || '';
+            document.getElementById('student-edit_street').value = data.street || '';
+            document.getElementById('student-edit_city').value = data.city || '';
+            document.getElementById('student-edit_state').value = data.state || '';
+            document.getElementById('student-edit_zip').value = data.zip || '';
+            document.getElementById('student-edit_country').value = data.country || '';
+            document.getElementById('student-edit_course').value = data.course || '';
+            document.getElementById('student-edit_year_semester').value = data.year_semester || '';
+            document.getElementById('student-edit_roll_no').value = data.roll_no || '';
+            document.getElementById('student-edit_department_student').value = data.department_student || '';
+
+            document.getElementById('student-edit-profile-picture-preview').src = data.profile_picture_url || '/static/student icon.png';
+
+            message.textContent = '';
+            message.style.color = '';
+        } catch (err) {
+            message.style.color = 'red';
+            message.textContent = 'Failed to load profile: ' + err.message;
+        }
+    }
+    document.getElementById('student-editBtn').addEventListener('click', () => {
+        viewDiv.style.display = 'none';
+        editForm.style.display = 'block';
+        message.textContent = '';
+    });
+    document.getElementById('student-cancelBtn').addEventListener('click', () => {
+        editForm.style.display = 'none';
+        viewDiv.style.display = 'block';
+        fetchProfile();
+        message.textContent = '';
+    });
+    editForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!confirm('Are you sure you want to save changes?')) return;
+
+        const formData = new FormData(editForm);
+
+        try {
+            const res = await fetch('/api/student/update_profile', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await res.json();
+
+            if (data.error) {
+                message.style.color = 'red';
+                message.textContent = data.error;
+            } else {
+                message.style.color = 'green';
+                message.textContent = 'Profile updated successfully!';
+                editForm.style.display = 'none';
+                viewDiv.style.display = 'block';
+                // refresh view with new data
+                fetchProfile();
+            }
+        } catch (err) {
+            message.style.color = 'red';
+            message.textContent = 'Failed to save profile: ' + err.message;
+        }
+    });
+
+    fetchProfile();
+});
+
+</script>
+

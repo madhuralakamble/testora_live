@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Exam Result</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Animation for smooth fade-in */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in {
+      animation: fadeIn 0.6s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-r from-purple-200 via-pink-200 to-red-200 min-h-screen flex flex-col items-center p-8 font-sans">
+
+  <!-- Header -->
+  <header class="w-full max-w-4xl mb-10 text-center">
+    <h1 class="text-4xl font-extrabold text-purple-900 drop-shadow-lg">🎓 Exam Result</h1>
+    <p class="text-gray-700 mt-2 text-lg">Your performance summary and detailed responses</p>
+  </header>
+
+  <!-- Result Summary -->
+  <div class="w-full max-w-4xl bg-white bg-opacity-90 p-8 rounded-2xl shadow-2xl border border-purple-300 fade-in">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+      <div>
+        <h2 id="examTitle" class="text-2xl font-bold text-purple-800 mb-1">Loading Exam...</h2>
+        <p id="examDate" class="text-gray-600"></p>
+      </div>
+      <div class="mt-4 md:mt-0">
+        <a href="/student/dashboard" class="px-6 py-2 bg-purple-700 text-white rounded-full font-semibold hover:bg-purple-900 transition shadow-md">
+          ⬅ Back to Dashboard
+        </a>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center mb-8">
+      <div class="bg-purple-100 border border-purple-300 rounded-xl p-4 shadow-md">
+        <p class="text-sm text-gray-600">Your Score</p>
+        <h3 id="score" class="text-3xl font-bold text-purple-800 mt-1">Loading...</h3>
+      </div>
+      <div class="bg-yellow-100 border border-yellow-300 rounded-xl p-4 shadow-md">
+        <p class="text-sm text-gray-600">Exam Status</p>
+        <h3 id="status" class="text-2xl font-bold mt-1 text-yellow-700">Loading...</h3>
+      </div>
+      <div class="bg-pink-100 border border-pink-300 rounded-xl p-4 shadow-md">
+        <p class="text-sm text-gray-600">Total Questions</p>
+        <h3 id="totalQuestions" class="text-3xl font-bold text-pink-700 mt-1">--</h3>
+      </div>
+    </div>
+
+    <!-- Answers Section -->
+    <div id="answersList" class="space-y-6">
+      <p class="text-center text-gray-500 italic">Loading your answers...</p>
+    </div>
+  </div>
+
+  <script>
+    async function renderStudentResult(attemptId) {
+      const examTitle = document.getElementById('examTitle');
+      const scoreElem = document.getElementById('score');
+      const statusElem = document.getElementById('status');
+      const answersList = document.getElementById('answersList');
+      const totalQuestions = document.getElementById('totalQuestions');
+
+      examTitle.textContent = 'Loading exam info...';
+      scoreElem.textContent = '...';
+      statusElem.textContent = '...';
+      answersList.innerHTML = '<p class="text-center text-gray-500 italic">Fetching data...</p>';
+
+      try {
+        const res = await fetch(`/api/attempts/${attemptId}/answers`);
+        if (!res.ok) throw new Error('Failed to fetch exam results.');
+
+        const data = await res.json();
+        const answers = data.answers || [];
+
+        examTitle.textContent = `📘 Exam: ${data.exam_title || 'Unknown'}`;
+        totalQuestions.textContent = answers.length;
+
+        let totalScore = 0;
+        let maxScore = 0;
+        let hasSubjective = false;
+
+        answers.forEach(q => {
+          maxScore += q.max_marks || 0;
+          totalScore += q.marks_assigned || 0;
+          if (q.question_type === 'subjective') hasSubjective = true;
+        });
+
+        const status = hasSubjective ? 'Pending Evaluation' : 'Completed';
+        scoreElem.textContent = `${totalScore} / ${maxScore}`;
+        statusElem.innerHTML = hasSubjective
+          ? '<span class="text-yellow-600 font-semibold">🕒 Pending Evaluation</span>'
+          : '<span class="text-green-600 font-semibold">✅ Completed</span>';
+
+        if (answers.length === 0) {
+          answersList.innerHTML = '<p class="text-center text-gray-500 italic">No answers found.</p>';
+          return;
+        }
+
+        let html = '<h3 class="text-xl font-bold text-purple-800 mb-4">🧾 Your Answers</h3>';
+        answers.forEach((q, i) => {
+          let marksDisplay =
+            q.question_type === 'subjective'
+              ? (q.marks_assigned > 0
+                  ? `<span class="text-green-700 font-semibold">${q.marks_assigned} Marks</span>`
+                  : `<span class="text-yellow-600 font-semibold">Pending Evaluation</span>`)
+              : `<span class="text-purple-700 font-semibold">${q.marks_assigned} Marks</span>`;
+
+          html += `
+            <div class="p-5 border border-gray-200 rounded-xl bg-gray-50 hover:bg-white transition-all shadow-sm fade-in">
+              <p class="text-gray-800 font-semibold mb-2">Q${i + 1}: ${q.question_text}</p>
+              <p class="text-sm text-gray-600 mb-1"><span class="font-semibold text-purple-700">Type:</span> ${q.question_type}</p>
+              <p class="text-sm text-gray-600 mb-1"><span class="font-semibold text-green-700">Correct Answer:</span> ${q.correct_answer || 'N/A'}</p>
+              <p class="text-sm text-gray-600 mb-1"><span class="font-semibold text-blue-700">Your Answer:</span> ${q.answer || 'Not answered'}</p>
+              <p class="mt-2">${marksDisplay}</p>
+            </div>`;
+        });
+
+        answersList.innerHTML = html;
+      } catch (err) {
+        examTitle.textContent = '⚠️ Error Loading Exam';
+        scoreElem.textContent = '-';
+        statusElem.textContent = '-';
+        answersList.innerHTML = `<p class="text-center text-red-600">${err.message}</p>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const attemptId = '{{ attempt_id }}'; // Flask variable
+      if (attemptId && attemptId !== 'None') {
+        renderStudentResult(attemptId);
+      } else {
+        document.getElementById('examTitle').textContent = 'No attempt ID provided.';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Dashboard - Testora</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+/* Animated background gradient waves for dashboard */
+body {
+  background: radial-gradient(circle at top left, #3b82f6, #9333ea, #111);
+  background-size: 300% 300%;
+  animation: bgWave 15s ease infinite;
+}
+@keyframes bgWave {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+.gradient-hover {
+      background-image: linear-gradient(90deg, rgb(90, 21, 146), #9333ea, #6a2abd);
+      background-size: 200% auto;
+      transition: background-position 0.5s, color 0.5s;
+    }
+.gradient-hover:hover {
+      background-position: right center;
+      color: white;
+    }
+
+header {
+      background: white;
+      box-shadow: 0 3px 12px rgba(184,16,250,0.473);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .header-container {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 14px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .logo img {
+      height: 75px;
+      width: auto;
+    }
+    .logo span {
+      font-family: 'Poppins', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #5f0494;
+    }
+    nav a {
+      font-weight: 600;
+      font-size: 1rem;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      width: 0%;
+      height: 2px;
+      background: #6c3dc7;
+      transition: 0.3s ease;
+      transform: translateX(-50%);
+    }
+    nav a:hover::after {
+      width: 60%;
+    }
+
+    /* Footer */
+    footer {
+      max-width: 960px;
+      margin: 100px auto 40px auto;
+      text-align: center;
+      color: #a39dc0;
+      font-size: 0.95rem;
+      position: relative;
+      z-index: 5;
+    }
+    .footer-social {
+      margin-top: 20px;
+      font-size: 2rem;
+    }
+    .footer-social a {
+      margin: 0 14px;
+      color: #6b3cc6;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+/* Sidebar styles */
+.dashboard-sidebar {
+  background: #181337;
+  color: #fff;
+  min-height: 100vh;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 0 16px #8316ea22;
+}
+.dashboard-sidebar nav a {
+  display: block;
+  font-weight: 600;
+  font-size: 1.08rem;
+  padding: 0.8rem 1.2rem;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+}
+.dashboard-sidebar nav a:hover, 
+.dashboard-sidebar nav .active {
+  background: linear-gradient(92deg, #6c3c96 0%, #7e49af 100%);
+  color: #fff !important;
+  transform: scale(1.05);
+}
+/* Avatar box */
+.sidebar-avatar-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.sidebar-avatar-box img {
+  width: 100px;
+  height: 100px;
+  border-radius: 9999px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 12px #9165ed66;
+}
+.sidebar-avatar-box .role {
+  color: #c6a5e7;
+  font-weight: 500;
+  font-size: 1.2rem;
+}
+
+/* Dashboard header */
+.dashboard-header {
+  background: white;
+  box-shadow: 0 3px 12px rgba(184, 16, 250, 0.23);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 16px 38px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dashboard-header .logo img {
+  height: 57px;
+  width: auto;
+  margin-right: 12px;
+}
+.dashboard-header .logo span {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #5f0494;
+}
+
+/* Main dashboard area */
+.dashboard-main {
+  padding: 2.5rem;
+  margin: 50px auto 50px auto;  
+  background: white;
+  box-shadow: 0 8px 42px #b173f04f;
+  border-radius: 2.2rem;
+  max-width: 1500px;
+  min-height: 65vh;
+  position: relative;
+  z-index: 10;
+}
+
+.dashboard-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 2.6rem;
+  color: #111;
+  letter-spacing: 0.10rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+.dashboard-card-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 2.2rem;
+  margin-bottom: 2.6rem;
+  justify-content: center;
+}
+.dashboard-card {
+  border-radius: 1.4rem;
+  box-shadow: 0 4px 16px #8b5cf64a;
+  padding: 2rem 1.5rem;
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+.dashboard-card:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 15px 35px rgba(99, 51, 255, 0.55);
+}
+.card-blue {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+} 
+
+.card-purple {
+  background: linear-gradient(135deg, #d946ef 0%, #a21caf 100%);
+} 
+
+.card-green {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+} 
+
+.card-pinkred {
+  background: linear-gradient(135deg, #f43f5e 0%, #ec4899 100%);
+} 
+
+.card-yellowish{
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+} 
+
+.dashboard-card .icon {font-size: 1.45rem; margin-bottom: .4rem;}
+.dashboard-card .label {font-size: 1.11rem; margin-bottom: 0.6rem;}
+.dashboard-card .value {font-size: 2.6rem; font-weight: 800;}
+
+/* Sidebar navigation links hover animation */
+.dashboard-sidebar nav a {
+  transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.3s ease;
+}
+.dashboard-sidebar nav a:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(99, 51, 255, 0.7);
+  background: linear-gradient(92deg, #6c3c96 0%, #7e49af 100%);
+  color: #fff !important;
+  z-index: 1;
+}
+
+/* Logout button hover animation */
+header button {
+  background: linear-gradient(90deg, #6c3c96, #a97fff);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  transition: background-position 0.4s ease, transform 0.25s ease, box-shadow 0.4s ease;
+  background-size: 200% auto;
+  box-shadow: 0 6px 12px rgba(147, 104, 233, 0.6);
+}
+
+header button:hover {
+  background-position: right center;
+  transform: scale(1.08);
+  box-shadow: 0 10px 20px rgba(166, 120, 222, 0.9);
+  background: linear-gradient(90deg, #7e49af, #6c3c96);
+}
+
+/* Smooth active sidebar link scale */
+.dashboard-sidebar nav a.active {
+  transform: scale(1.07);
+  box-shadow: 0 10px 22px rgba(99, 51, 255, 0.75);
+  background: linear-gradient(92deg, #7e49af 0%, #6c3c96 100%);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .dashboard-main {
+    padding: 1.3rem;
+    max-width: 98vw;
+  }
+  .dashboard-title {
+    font-size: 2rem;
+  }
+  .dashboard-card-row {
+    gap: 1.3rem;
+  }
+}
+@media (max-width: 650px) {
+  .dashboard-main {
+    padding: .7rem;
+    border-radius: 18px;
+  }
+  .dashboard-title {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+}
+  @keyframes wave {
+      from { background-position-x: 0; }
+      to { background-position-x: 1000px; }
+    }
+    @keyframes shimmer {
+      to { background-position: 200% center; }
+    }
+@keyframes floatSlow {
+  0%   { transform: translateY(0) scale(1); opacity: 0.18; }
+  50%  { transform: translateY(-80px) scale(1.13); opacity: 0.32;}
+  100% { transform: translateY(0) scale(1); opacity: 0.18;}
+}
+@keyframes floatSlower {
+  0%   { transform: translateY(0) scale(1); opacity: 0.13; }
+  50%  { transform: translateY(-110px) scale(1.19); opacity: 0.35;}
+  100% { transform: translateY(0) scale(1); opacity: 0.13;}
+}
+@keyframes floatSlowest {
+  0%   { transform: translateY(0) scale(1); opacity: 0.13; }
+  50%  { transform: translateY(-180px) scale(1.28); opacity: 0.39;}
+  100% { transform: translateY(0) scale(1); opacity: 0.13;}
+}
+.float-slow    { animation: floatSlow 9s ease-in-out infinite; }
+.float-slower  { animation: floatSlower 13s ease-in-out infinite;}
+.float-slowest { animation: floatSlowest 18s ease-in-out infinite;}
+
+
+#profile-view {
+  max-width: 1400px;
+  padding: 40px 50px;
+  font-size: x-large;
+}
+
+#profile-view > div:nth-child(2) {
+  padding-left: 40px;
+}
+
+  </style>
+</head>
+<body>
+  <!-- Floating Circles Background -->
+  <div class="fixed rounded-full bg-white float-slow opacity-10" style="width:90px;height:90px;top:9vh;left:10vw;"></div>
+  <div class="fixed rounded-full bg-white float-slower opacity-10" style="width:120px;height:120px;top:4vh;left:82vw;"></div>
+  <div class="fixed rounded-full bg-white float-slowest opacity-10" style="width:200px;height:200px;top:66vh;left:68vw;"></div>
+  <div class="fixed rounded-full bg-purple-200 float-slower opacity-10" style="width:110px;height:110px;top:80vh;left:25vw;"></div>
+  <div class="fixed rounded-full bg-white float-slowest opacity-10" style="width:200px;height:200px;top:60vh;left:95vw;"></div>
+  <div class="fixed rounded-full bg-white float-slow opacity-10" style="width:100px;height:100px;top:19vh;left:40vw;"></div>
+  <!-- Navbar -->
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Testora Logo"
+          class="mx-auto rounded-full shadow-lg" />
+        <span>Testora</span>
+      </div>
+      <a href="{{ url_for('logout') }}">
+      <button class="bg-red-600 text-white px-5 py-2 rounded hover:bg-red-700 transition">Logout</button>
+      </a>
+    </header>
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar w-64 flex-shrink-0">
+      <div class="sidebar-avatar-box">
+        <img src="{{ user.avatar_url }}" alt="Admin Avatar" />
+        <div class="font-bold text-lg">{{ user.username }}</div>
+        <div class="role">{{ user.role|capitalize }}</div>
+      </div>
+      <nav>
+          <a href="#" class="active" onclick="switchTab('dashboard', event)">Dashboard</a>
+          <a href="#" onclick="switchTab('teachers', event)">Teacher Section</a>
+          <a href="#" onclick="switchTab('students', event)">Student Section</a>
+          {% if is_superadmin %}
+            <a href="#" onclick="switchTab('admin-management-section', event)">Admin Section</a>
+          {% endif %}
+         
+          <a href="#" onclick="switchTab('edit-profile', event)">Edit Profile</a>
+</nav>
+    </aside>
+    <!-- Main Dashboard Area -->
+    <main class="dashboard-main flex-1">
+       <div id="dashboard" class="tab-content" style="display: block;">
+      <h1 class="dashboard-title">Admin Dashboard</h1>
+      <div class="dashboard-card-row grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+        <div class="dashboard-card card-blue">
+          <div class="label">Registered Students</div>
+          <div class="value">{{ students_count }}</div>
+        </div>
+        <div class="dashboard-card card-purple">
+          <div class="label">Total Teachers</div><br>
+          <div class="value">{{ teachers_count }}</div>
+        </div>
+        {% if is_superadmin %}
+          <div id="admins-count-tab" class="dashboard-card card-yellowish">
+            <div class="label">Total Admin</div><br>
+                 <div class="value">{{ admins_count }}</div>
+          </div>
+        {% endif %}
+        <div class="dashboard-card card-green">
+          <div class="label">Total  Exams</div><br>
+          <div class="value">{{ total_exams }}</div>
+        </div>
+        <div class="dashboard-card card-pinkred">
+          <div class="label">Available Questions</div>
+          <div class="value">{{ questions_count }}</div>
+        </div>
+      </div>
+      </div>
+
+      <!--  teacher management interface here -->
+
+      <div id="teachers" class="tab-content" style="display: none;">
+    <h1 class="dashboard-title">Teacher Section</h1>
+    
+    <div class="flex-grow items-center mb-4 max-w-md gap-4">
+  <div class="relative flex-grow">
+    <input type="text" id="teacherSearch" placeholder="Search Teachers By Name or Username....."
+      class="w-full p-2 border rounded pl-10" onkeyup="filterTeachers()" />
+    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103 10.5a7.5 7.5 0 0013.65 6.15z" />
+      </svg>
+    </div>
+  </div>
+<br>
+  <button onclick="openAddTeacherForm()"
+    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow">
+    + Add Teacher
+  </button>
+</div> 
+ 
+
+<table class="min-w-full border rounded">
+  <thead>
+    <tr class="bg-purple-300">
+      <th class="border px-4 py-2">Name</th>
+      <th class="border px-4 py-2">Username</th>
+      <th class="border px-4 py-2">Email</th>
+      <th class="border px-4 py-2">Status</th>
+      <th class="border px-4 py-2">Actions</th>
+    </tr>
+  </thead>
+  <tbody id="teachersTableBody">
+    {% for teacher in teachers %}
+    <tr data-teacher-id="{{ teacher.id }}">
+      <td class="border px-4 py-2">{{ teacher.full_name or 'N/A' }}</td>
+      <td class="border px-4 py-2">{{ teacher.username }}</td>
+      <td class="border px-4 py-2">{{ teacher.email }}</td>
+      <td class="border px-4 py-2">
+        <span class="{% if (teacher.status or 'Active').lower() == 'active' %}text-green-600{% elif (teacher.status or '').lower() == 'deactive' %}text-red-600{% else %}text-gray-700{% endif %}">{{ teacher.status or 'Active' }}</span>
+      </td>
+      <td class="border px-4 py-2">
+
+        <button onclick="openEditForm('{{ teacher.id }}')" class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded mr-2">Edit</button>
+        <!-- Edit Teacher Modal -->
+<div id="editTeacherModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+  <form id="editTeacherForm" enctype="multipart/form-data"  class="bg-white rounded-xl p-8 w-full max-w-lg shadow-xl relative overflow-y-auto" style="max-height: 72vh;">
+    <h2 class="text-2xl font-bold mb-6 text-center">Edit Teacher Profile</h2>
+    <div class="flex flex-col items-center mb-4">
+      <img id="edit_teacher_photo" class="w-24 h-24 rounded-full object-cover mb-2 border" src="" alt="Profile Photo" />
+      <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="mb-2">
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <label for="full_name" class="block font-semibold mb-1">Full Name</label>
+      <input type="text" id="full_name" name="full_name" placeholder="Full Name" class="border p-2 rounded" required />
+      <label for="email" class="block font-semibold mb-1">Email</label>
+      <input type="email" id="email" name="email" placeholder="Email" class="border p-2 rounded" required />
+      <label for="phone" class="block font-semibold mb-1">Phone</label>
+      <input type="text" id="phone" name="phone" placeholder="Phone" class="border p-2 rounded" required/>
+      <label for="dob" class="block font-semibold mb-1">DOB</label>
+      <input type="date" id="dob" name="dob" placeholder="Date of Birth" class="border p-2 rounded" required/>
+      <label for="gender" class="block font-semibold mb-1">Gender</label>
+      <input type="text" id="gender" name="gender" placeholder="Gender" class="border p-2 rounded" required/>
+      <label for="department_teacher" class="block font-semibold mb-1">Department</label>
+      <input type="text" id="department_teacher" name="department_teacher" placeholder="Department" class="border p-2 rounded" required />
+      <label for="courses_handling" class="block font-semibold mb-1">Courses</label>
+      <input type="text" id="courses_handling" name="courses_handling" placeholder="Courses Handling" class="border p-2 rounded" required/>
+      <label for="designation" class="block font-semibold mb-1">Designation</label>
+      <input type="text" id="designation" name="designation" placeholder="Designation" class="border p-2 rounded" required/>
+      <label for="experience" class="block font-semibold mb-1">Experience</label>
+      <input type="number" id="experience" name="experience" placeholder="Experience" class="border p-2 rounded" min="0" step="1" required/>
+      <label for="qualifications" class="block font-semibold mb-1">Qualifications</label>
+      <input type="text" id="qualifications" name="qualifications" placeholder="Qualifications" class="border p-2 rounded" required/>
+    </div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-800 transition font-semibold">Save</button>
+      <button type="button" onclick="closeEditForm()" class="bg-gray-300 text-gray-700 px-5 py-2 rounded hover:bg-gray-400 font-semibold">Cancel</button>
+    </div>
+    <span class="absolute top-3 right-6 text-xl cursor-pointer" onclick="closeEditForm()">X</span>
+  </form>
+</div>
+
+        <button
+  onclick="toggleTeacherStatus('{{ teacher.id }}', this)"
+  class="px-3 py-1 rounded text-white"
+  style="background-color: '{{ '#dc2626' if teacher.status == 'Active' else '#16a34a' }}';"
+>
+  {% if teacher.status == 'Active' %}
+    Deactivate
+  {% else %}
+    Activate
+  {% endif %}
+</button>
+        <button onclick="deleteTeacher('{{ teacher.id }}')" class="bg-red-600 hover:bg-gray-800 text-white px-3 py-1 rounded">Delete</button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+  </div>
+<div id="addTeacherModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+  <form id="addTeacherForm" enctype="multipart/form-data" class="bg-white rounded-xl p-8 w-full max-w-lg shadow-xl relative overflow-y-auto" style="max-height: 72vh;">
+    <h2 class="text-2xl font-bold mb-6 text-center">Add New Teacher</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <label for="new_full_name" class="block font-semibold mb-1">Full Name</label>
+      <input type="text" id="new_full_name" name="full_name" placeholder="Full Name" class="border p-2 rounded" required />
+
+      <label for="new_email" class="block font-semibold mb-1">Email</label>
+      <input type="email" id="new_email" name="email" placeholder="Email" class="border p-2 rounded" required />
+
+      <label for="new_username" class="block font-semibold mb-1">Username</label>
+      <input type="text" id="new_username" name="username" placeholder="Username" class="border p-2 rounded" required />
+
+      <label for="new_password" class="block font-semibold mb-1">Password</label>
+      <input type="password" id="new_password" name="password" placeholder="Password" class="border p-2 rounded" required />
+
+      <label for="new_confirm_password" class="block font-semibold mb-1">Confirm Password</label>
+      <input type="password" id="new_confirm_password" name="confirm_password" placeholder="Confirm Password" class="border p-2 rounded" required />
+    </div>
+
+    <div class="flex justify-end gap-3 mt-6">
+      <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700 transition font-semibold">Add Teacher</button>
+      <button type="button" onclick="closeAddTeacherForm()" class="bg-gray-300 text-gray-700 px-5 py-2 rounded hover:bg-gray-400 font-semibold">Cancel</button>
+    </div>
+
+    <span class="absolute top-3 right-6 text-xl cursor-pointer" onclick="closeAddTeacherForm()">X</span>
+  </form>
+</div>
+
+<!--Student Management Interface-->
+
+<!-- Student Section -->
+<div id="students" class="tab-content" style="display: none;">
+  <h1 class="dashboard-title">Student Section</h1>
+  
+  <div class="flex-grow items-center mb-4 max-w-md gap-4">
+    <div class="relative flex-grow">
+      <input type="text" id="studentSearch" placeholder="Search Students By Name or Username....."
+        class="w-full p-2 border rounded pl-10" onkeyup="filterStudents()" />
+      <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103 10.5a7.5 7.5 0 0013.65 6.15z" />
+        </svg>
+      </div>
+    </div>
+    <br>
+    <button onclick="openAddStudentForm()"
+      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow">
+      + Add Student
+    </button>
+  </div>
+
+  <table class="min-w-full border rounded">
+    <thead>
+      <tr class="bg-purple-300">
+        <th class="border px-4 py-2">Name</th>
+        <th class="border px-4 py-2">Username</th>
+        <th class="border px-4 py-2">Email</th>
+        <th class="border px-4 py-2">Status</th>
+        <th class="border px-4 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="studentsTableBody">
+      {% for student in students %}
+      <tr data-student-id="{{ student.id }}">
+        <td class="border px-4 py-2">{{ student.full_name or 'N/A' }}</td>
+        <td class="border px-4 py-2">{{ student.username }}</td>
+        <td class="border px-4 py-2">{{ student.email }}</td>
+        <td class="border px-4 py-2">
+          <span class="{% if (student.status or 'Active').lower() == 'active' %}text-green-600{% elif (student.status or '').lower() == 'deactive' %}text-red-600{% else %}text-gray-700{% endif %}">{{ student.status or 'Active' }}</span>
+        </td>
+        <td class="border px-4 py-2">
+
+          <button onclick="openEditStudentForm('{{ student.id }}')" class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded mr-2">Edit</button>
+
+          <button
+            onclick="toggleStudentStatus('{{ student.id }}', this)"
+            class="px-3 py-1 rounded text-white"
+            >
+            {% if student.status == 'Active' %}
+              Deactivate
+            {% else %}
+              Activate
+            {% endif %}
+          </button>
+
+          <button onclick="deleteStudent('{{ student.id }}')" class="bg-red-600 hover:bg-gray-800 text-white px-3 py-1 rounded">Delete</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Edit Student Modal -->
+<div id="editStudentModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+  <form id="editStudentForm" enctype="multipart/form-data"  class="bg-white rounded-xl p-8 w-full max-w-lg shadow-xl relative overflow-y-auto" style="max-height: 72vh;">
+    <h2 class="text-2xl font-bold mb-6 text-center">Edit Student Profile</h2>
+    <div class="flex flex-col items-center mb-4">
+      <img id="edit_student_photo" class="w-24 h-24 rounded-full object-cover mb-2 border" src="" alt="Profile Photo" />
+      <input type="file" id="profile_picture_student" name="profile_picture" accept="image/*" class="mb-2">
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <label for="full_name_student" class="block font-semibold mb-1">Full Name</label>
+      <input type="text" id="full_name_student" name="full_name" placeholder="Full Name" class="border p-2 rounded" required />
+      
+      <label for="email_student" class="block font-semibold mb-1">Email</label>
+      <input type="email" id="email_student" name="email" placeholder="Email" class="border p-2 rounded" required />
+      
+      <label for="phone_student" class="block font-semibold mb-1">Phone</label>
+      <input type="text" id="phone_student" name="phone" placeholder="Phone" class="border p-2 rounded" />
+      
+      <label for="dob_student" class="block font-semibold mb-1">DOB</label>
+      <input type="date" id="dob_student" name="dob" placeholder="Date of Birth" class="border p-2 rounded" />
+      
+      <label for="gender_student" class="block font-semibold mb-1">Gender</label>
+      <input type="text" id="gender_student" name="gender" placeholder="Gender" class="border p-2 rounded" />
+      
+      <label for="course_student" class="block font-semibold mb-1">Course</label>
+      <input type="text" id="course_student" name="course" placeholder="Course" class="border p-2 rounded" />
+      
+      <label for="year_semester_student" class="block font-semibold mb-1">Year/Semester</label>
+      <input type="text" id="year_semester_student" name="year_semester" placeholder="Year/Semester" class="border p-2 rounded" />
+      
+      <label for="roll_no_student" class="block font-semibold mb-1">Roll No</label>
+      <input type="text" id="roll_no_student" name="roll_no" placeholder="Roll No" class="border p-2 rounded" />
+      
+      <label for="department_student" class="block font-semibold mb-1">Department</label>
+      <input type="text" id="department_student" name="department_student" placeholder="Department" class="border p-2 rounded" />
+    </div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-800 transition font-semibold">Save</button>
+      <button type="button" onclick="closeEditStudentForm()" class="bg-gray-300 text-gray-700 px-5 py-2 rounded hover:bg-gray-400 font-semibold">Cancel</button>
+    </div>
+    <span class="absolute top-3 right-6 text-xl cursor-pointer" onclick="closeEditStudentForm()">X</span>
+  </form>
+</div>
+
+<!-- Add Student Modal -->
+<div id="addStudentModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+  <form id="addStudentForm" enctype="multipart/form-data" class="bg-white rounded-xl p-8 w-full max-w-lg shadow-xl relative overflow-y-auto" style="max-height: 72vh;">
+    <h2 class="text-2xl font-bold mb-6 text-center">Add New Student</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <label for="new_full_name_student" class="block font-semibold mb-1">Full Name</label>
+      <input type="text" id="new_full_name_student" name="full_name" placeholder="Full Name" class="border p-2 rounded" required />
+      
+      <label for="new_email_student" class="block font-semibold mb-1">Email</label>
+      <input type="email" id="new_email_student" name="email" placeholder="Email" class="border p-2 rounded" required />
+      
+      <label for="new_username_student" class="block font-semibold mb-1">Username</label>
+      <input type="text" id="new_username_student" name="username" placeholder="Username" class="border p-2 rounded" required />
+      
+      <label for="new_password_student" class="block font-semibold mb-1">Password</label>
+      <input type="password" id="new_password_student" name="password" placeholder="Password" class="border p-2 rounded" required />
+      
+      <label for="new_confirm_password_student" class="block font-semibold mb-1">Confirm Password</label>
+      <input type="password" id="new_confirm_password_student" name="confirm_password" placeholder="Confirm Password" class="border p-2 rounded" required />
+    </div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700 transition font-semibold">Add Student</button>
+      <button type="button" onclick="closeAddStudentForm()" class="bg-gray-300 text-gray-700 px-5 py-2 rounded hover:bg-gray-400 font-semibold">Cancel</button>
+    </div>
+    <span class="absolute top-3 right-6 text-xl cursor-pointer" onclick="closeAddStudentForm()">X</span>
+  </form>
+</div>
+
+<!--  admin management  here -->
+
+{% if is_superadmin %}
+<div id="admin-management-section" class="tab-content" style="display: none;">
+  <h1 class="dashboard-title">Admin Section</h1>
+
+  <div class="flex-grow items-center mb-4 max-w-md gap-4">
+    <div class="relative flex-grow">
+      <input type="text" id="adminSearch" placeholder="Search Admins By Name or Username....."
+        class="w-full p-2 border rounded pl-10" onkeyup="filterAdmins()" />
+      <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103 10.5a7.5 7.5 0 0013.65 6.15z" />
+        </svg>
+      </div>
+    </div>
+    <br>
+    <button onclick="openAddAdminForm()"
+      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow">
+      + Add Admin
+    </button>
+  </div>
+
+  <table class="min-w-full border rounded">
+  <thead>
+    <tr class="bg-purple-300">
+      <th class="border px-4 py-2">Name</th>
+      <th class="border px-4 py-2">Username</th>
+      <th class="border px-4 py-2">Email</th>
+      <th class="border px-4 py-2">Status</th>
+      <th class="border px-4 py-2">Actions</th>
+    </tr>
+  </thead>
+  <tbody id="adminsTableBody">
+  {% for admin in admins %}
+  <tr data-admin-id="{{ admin.id }}">
+    <td class="border px-4 py-2">{{ admin.full_name or 'N/A' }}</td>
+    <td class="border px-4 py-2">{{ admin.username }}</td>
+    <td class="border px-4 py-2">{{ admin.email }}</td>
+    <td class="border px-4 py-2">
+      <span class="{% if (admin.status or 'Active').lower() == 'active' %}
+        text-green-600
+      {% elif (admin.status or '').lower() == 'deactive' %}
+        text-red-600
+      {% else %}
+        text-gray-700
+      {% endif %}">
+        {{ admin.status or 'Active' }}
+      </span>
+    </td>
+    <td class="border px-4 py-2">
+      <button onclick="openEditAdminForm('{{ admin.id }}')" class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded mr-2">Edit</button>
+      
+      <!-- Edit Admin Modal -->
+<div id="editAdminModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+  <form id="editAdminForm" enctype="multipart/form-data"
+    class="bg-white rounded-xl p-8 w-full max-w-lg shadow-xl relative overflow-y-auto" style="max-height: 72vh;">
+    <h2 class="text-2xl font-bold mb-6 text-center">Edit Admin Profile</h2>
+    <div class="flex flex-col items-center mb-4">
+      <img id="edit_admin_photo" class="w-24 h-24 rounded-full object-cover mb-2 border" src="" alt="Profile Photo" />
+      <input type="file" id="profile_picture_admin" name="profile_picture" accept="image/*" class="mb-2" />
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <label for="full_name_admin" class="block font-semibold mb-1">Full Name</label>
+      <input type="text" id="full_name_admin" name="full_name" placeholder="Full Name" class="border p-2 rounded" required />
+
+      <label for="email_admin" class="block font-semibold mb-1">Email</label>
+      <input type="email" id="email_admin" name="email" placeholder="Email" class="border p-2 rounded" required />
+
+      <label for="phone_admin" class="block font-semibold mb-1">Phone</label>
+      <input type="text" id="phone_admin" name="phone" placeholder="Phone" class="border p-2 rounded" required />
+
+      <label for="dob_admin" class="block font-semibold mb-1">DOB</label>
+      <input type="date" id="dob_admin" name="dob" placeholder="Date of Birth" class="border p-2 rounded" required />
+
+      <label for="gender_admin" class="block font-semibold mb-1">Gender</label>
+      <input type="text" id="gender_admin" name="gender" placeholder="Gender" class="border p-2 rounded" required />
+    </div>
+    <div class="flex justify-end gap-3 mt-6">
+      <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-800 transition font-semibold">Save</button>
+      <button type="button" onclick="closeEditAdminForm()" class="bg-gray-300 text-gray-700 px-5 py-2 rounded hover:bg-gray-400 font-semibold">Cancel</button>
+    </div>
+    <span class="absolute top-3 right-6 text-xl cursor-pointer" onclick="closeEditAdminForm()">X</span>
+  </form>
+</div>
+
+      
+      <button onclick="toggleAdminStatus('{{ admin.id }}', this)" class="px-3 py-1 rounded text-white" style="background-color: '{{ '#dc2626' if admin.status == 'Active' else '#16a34a' }}';">
+     {% if admin.status == 'Active' %}
+        Deactivate
+     {% else %}
+        Activate
+     {% endif %}
+      </button>
+      <button onclick="deleteAdmin('{{ admin.id }}')" class="bg-red-600 hover:bg-red-800 text-white px-3 py-1 rounded">Delete</button>
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+</table>
+
+</div>
+
+<!--  Admin Modal  -->
+<div id="addAdminModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+  <form id="addAdminForm" enctype="multipart/form-data" class="bg-white rounded-xl p-8 w-full max-w-lg shadow-xl relative overflow-y-auto" style="max-height: 72vh;">
+    <h2 class="text-2xl font-bold mb-6 text-center">Add New Admin</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <label for="new_full_name_admin" class="block font-semibold mb-1">Full Name</label>
+      <input type="text" id="new_full_name_admin" name="full_name" placeholder="Full Name" class="border p-2 rounded" required />
+
+      <label for="new_email_admin" class="block font-semibold mb-1">Email</label>
+      <input type="email" id="new_email_admin" name="email" placeholder="Email" class="border p-2 rounded" required />
+
+      <label for="new_username_admin" class="block font-semibold mb-1">Username</label>
+      <input type="text" id="new_username_admin" name="username" placeholder="Username" class="border p-2 rounded" required />
+
+      <label for="new_password_admin" class="block font-semibold mb-1">Password</label>
+      <input type="password" id="new_password_admin" name="password" placeholder="Password" class="border p-2 rounded" required />
+
+      <label for="new_confirm_password_admin" class="block font-semibold mb-1">Confirm Password</label>
+      <input type="password" id="new_confirm_password_admin" name="confirm_password" placeholder="Confirm Password" class="border p-2 rounded" required />
+    </div>
+
+    <div class="flex justify-end gap-3 mt-6">
+      <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700 transition font-semibold">Add Admin</button>
+      <button type="button" onclick="closeAddAdminForm()" class="bg-gray-300 text-gray-700 px-5 py-2 rounded hover:bg-gray-400 font-semibold">Cancel</button>
+    </div>
+
+    <span class="absolute top-3 right-6 text-xl cursor-pointer" onclick="closeAddAdminForm()">X</span>
+  </form>
+</div>
+
+
+{% endif %}
+
+
+
+
+
+
+ 
+
+  
+  
+<div id="edit-profile" class="tab-content" style="display: none; max-width: 1100px; margin: 10px auto; background: white; padding: 20px; border-radius: 10px; color: black;">
+  <h1 class="dashboard-title">Edit Profile</h1>
+
+<!-- Profile view mode with box -->
+<div id="profile-view" 
+  style="
+    max-width: 1100px; 
+    width: 100%;
+    margin-left: 0;
+    display: flex; 
+    gap: 40px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    box-sizing: border-box; /* important for padding */
+  ">
+  <div style="flex-shrink: 0; display: flex; flex-direction: column; align-items: center;">
+    <img id="view-profile-picture" src="/static/admin icon.jpg" alt="Profile Picture"
+      style="width: 175px; height: 175px; border-radius: 50%; object-fit: cover; border: 4px solid #a78bfa; margin-bottom: 24px;">
+  </div>
+
+  <div style="flex-grow: 1; padding-left: 10px;">
+    <div style="margin-bottom: 32px;">
+      <div style="font-size: 2rem; font-weight: 800; letter-spacing: 1px; color: #561c8b;">Full Name: <span id="view_full_name"></span></div>
+      <div style="font-size: 1.5rem; font-weight: 600; color: #444; margin-top: 14px;">Username: <span id="view_username"></span></div>
+    </div>
+
+    <div style="font-size: 1.4rem; line-height: 2.4; color: #222; letter-spacing: .05em;">
+      <div><b>Email:</b> <span id="view_email"></span></div>
+      <div><b>Alternate Email:</b> <span id="view_alt_email"></span></div>
+      <div><b>Phone:</b> <span id="view_phone"></span></div>
+      <div><b>Date of Birth:</b> <span id="view_dob"></span></div>
+      <div><b>Gender:</b> <span id="view_gender"></span></div>
+      <div><b>Street:</b> <span id="view_street"></span></div>
+      <div><b>City:</b> <span id="view_city"></span></div>
+      <div><b>State:</b> <span id="view_state"></span></div>
+      <div><b>Zip:</b> <span id="view_zip"></span></div>
+      <div><b>Country:</b> <span id="view_country"></span></div>
+    </div>
+
+    <div style="margin-top: 36px; text-align: left;">
+      <button id="editBtn" style="font-size: 1.5rem; padding: 16px 44px; background-color: #6a2abd; color: white; border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 3px 14px #a78bfa55;">Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Profile edit mode -->
+<form id="profile-edit" style="display: none; max-width: 700px; margin: 20px auto 0; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background: white;" enctype="multipart/form-data" >
+  <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 20px; color: #561c8b;">Edit Profile</h2>
+
+  <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+    <img id="edit-profile-picture-preview" src="/static/admin icon.jpg" alt="Profile Picture Preview"
+      style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid #6a2abd;">
+    <input type="file" id="edit-profile-picture" name="profile_picture" accept="image/*"
+      style="padding: 6px; border-radius: 5px; border: 1px solid #ccc;"/>
+  </div>
+  <div id="image_error" style="color: red; font-weight: 600; margin-top: 5px;"></div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_username" style="font-weight: 600; display: block; margin-bottom: 6px;">Username (Readonly):</label>
+    <input type="text" id="edit_username" name="username" readonly
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; background: #f0f0f0;"/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_full_name" style="font-weight: 600; display: block; margin-bottom: 6px;">Full Name:</label>
+    <input type="text" id="edit_full_name" name="full_name" required
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_dob" style="font-weight: 600; display: block; margin-bottom: 6px;">Date of Birth:</label>
+    <input type="date" id="edit_dob" name="dob" required
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_gender" style="font-weight: 600; display: block; margin-bottom: 6px;">Gender:</label>
+    <select id="edit_gender" name="gender" required
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+      <option value="" disabled>Select Gender</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_email" style="font-weight: 600; display: block; margin-bottom: 6px;">Email (Readonly):</label>
+    <input type="email" id="edit_email" name="email" readonly
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; background: #f0f0f0;"/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_alt_email" style="font-weight: 600; display: block; margin-bottom: 6px;">Alternate Email:</label>
+    <input type="email" id="edit_alt_email" name="alt_email"
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_phone" style="font-weight: 600; display: block; margin-bottom: 6px;">Phone:</label>
+    <input type="text" id="edit_phone" name="phone"
+      pattern="^\d{10}$" maxlength="10" minlength="10"
+      title="Phone number must be exactly 10 digits"
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_street" style="font-weight: 600; display: block; margin-bottom: 6px;">Street:</label>
+    <input type="text" id="edit_street" name="street"
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_city" style="font-weight: 600; display: block; margin-bottom: 6px;">City:</label>
+    <input type="text" id="edit_city" name="city"
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_state" style="font-weight: 600; display: block; margin-bottom: 6px;">State:</label>
+    <input type="text" id="edit_state" name="state"
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+    <label for="edit_zip" style="font-weight: 600; display: block; margin-bottom: 6px;">Zip:</label>
+    <input type="text" id="edit_zip" name="zip"
+      style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required/>
+  </div>
+
+  <div style="margin-bottom: 10px;">
+  <label for="edit_country" style="font-weight: 600; display: block; margin-bottom: 6px;">Country:</label>
+  <select id="edit_country" name="country" required
+    style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+    <option value="" disabled selected>Select your country</option>
+    <option value="usa">United States</option>
+    <option value="canada">Canada</option>
+    <option value="uk">United Kingdom</option>
+    <option value="india">India</option>
+   
+  </select>
+</div>
+
+
+  <div style="margin-top: 15px;">
+    <button type="submit"
+      style="background-color: #16a34a; color: white; padding: 12px 24px; border:none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1rem;">Save</button>
+    <button type="button" id="cancelBtn"
+      style="margin-left: 12px; background-color: #9ca3af; color: white; padding: 12px 24px; border:none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1rem;">Cancel</button>
+  </div>
+
+  <div id="message" style="margin-top: 15px; color: red; font-weight: bold;"></div>
+</form>
+
+
+
+
+
+  
+
+</div>
+
+      <div class="bg-gray-200 rounded-md py-3 px-6 mt-16 text-center font-semibold text-xl text-gray-700 shadow">
+        Online Examination System
+      </div>
+    </main>
+  </div>
+  <!-- Footer -->
+  <footer class="py-8 px-8 text-center bg-black/30 backdrop-blur-md">
+    <p class="mb-4">© 2025 Testora. All rights reserved.</p>
+    <div class="flex justify-center space-x-8 mt-4">
+      <a href="https://facebook.com" target="_blank" class="hover:text-blue-500 transition" aria-label="Facebook">
+        <!-- Facebook SVG -->
+        <svg fill="currentColor" viewBox="0 0 24 24" class="w-7 h-7"><path d="M22 12.07C22 6.49 17.52 2 12 2S2 6.49 2 12.07c0 5.02 3.66 9.18 8.44 9.93v-7.03H7.89v-2.9h2.55v-2.21c0-2.52 1.5-3.9 3.8-3.9 1.1 0 2.25.2 2.25.2v2.46h-1.27c-1.25 0-1.67.78-1.67 1.57v1.87h2.83l-.45 2.9h-2.38v7.03C18.34 21.25 22 17.09 22 12.07z"/></svg>
+      </a>
+      <a href="https://instagram.com" target="_blank" class="hover:text-pink-500 transition" aria-label="Instagram">
+        <!-- Instagram SVG -->
+        <svg fill="currentColor" viewBox="0 0 24 24" class="w-7 h-7"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm4.25 2.7a5.05 5.05 0 1 1 0 10.1 5.05 5.05 0 0 1 0-10.1zm0 1.5a3.55 3.55 0 1 0 0 7.1 3.55 3.55 0 0 0 0-7.1zm5.1.6a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+      </a>
+      <a href="https://linkedin.com" target="_blank" class="hover:text-blue-700 transition" aria-label="LinkedIn">
+        <!-- LinkedIn SVG -->
+        <svg fill="currentColor" viewBox="0 0 24 24" class="w-7 h-7"><path d="M19 0h-14a5 5 0 0 0-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11.07 20h-2.87V9h2.87v11zm-1.43-12.26c-.92 0-1.66-.75-1.66-1.66 0-.92.75-1.66 1.66-1.66.92 0 1.66.75 1.66 1.66 0 .91-.75 1.66-1.66 1.66zm14.57 12.26h-2.87v-5.5c0-1.31-.02-3-1.87-3-1.87 0-2.16 1.46-2.16 2.89v5.61h-2.87V9h2.76v1.5h.04c.39-.75 1.39-1.55 2.88-1.55 3.08 0 3.65 2.03 3.65 4.67v6.38z"/></svg>
+      </a>
+    </div>
+  </footer>
+</body>
+<script>
+  function switchTab(tabId, evt) {
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(tc => tc.style.display = 'none');
+
+    const links = document.querySelectorAll('.dashboard-sidebar nav a');
+    links.forEach(link => link.classList.remove('active'));
+
+    const selectedTab = document.getElementById(tabId);
+    if (selectedTab) selectedTab.style.display = 'block';
+    evt.currentTarget.classList.add('active');
+
+  }
+</script>
+
+<!--TEACHERS -->
+<script>
+  function filterTeachers() {
+  const input = document.getElementById('teacherSearch');
+  const filter = input.value.toLowerCase();
+  const rows = document.querySelectorAll('#teachersTableBody tr');
+
+  rows.forEach(row => {
+    const name = row.cells[0].textContent.toLowerCase();
+    const username = row.cells[1].textContent.toLowerCase();
+    if (name.includes(filter) || username.includes(filter)) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+}
+
+async function openEditForm(teacherId) {
+  // Fetch teacher data from backend
+  const response = await fetch(`/admin/teacher/${teacherId}`);
+  if (!response.ok) {
+    alert('Failed to fetch teacher data.');
+    return;
+  }
+  const teacher = await response.json();
+
+  // Populate fields
+  document.getElementById('full_name').value = teacher.full_name || '';
+  document.getElementById('email').value = teacher.email || '';
+  document.getElementById('phone').value = teacher.phone || '';
+  document.getElementById('dob').value = teacher.dob || '';
+  document.getElementById('gender').value = teacher.gender || '';
+  document.getElementById('department_teacher').value = teacher.department_teacher || '';
+  document.getElementById('courses_handling').value = teacher.courses_handling || '';
+  document.getElementById('designation').value = teacher.designation || '';
+  document.getElementById('experience').value = teacher.experience || '';
+  document.getElementById('qualifications').value = teacher.qualifications || '';
+
+  // Set photo
+  const teacherPhotoUrl = teacher.profile_picture
+    ? `/static/uploads/${teacher.profile_picture}`
+    : '/static/admin icon.jpg';
+  document.getElementById('edit_teacher_photo').src = teacherPhotoUrl;
+
+  // Store teacher ID on form dataset
+  document.getElementById('editTeacherForm').dataset.teacherId = teacherId;
+
+  // Show modal
+  document.getElementById('editTeacherModal').classList.remove('hidden');
+}
+
+document.getElementById('editTeacherForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  if (!confirm('Are you sure you want to save the changes?')) {
+    return;
+  }
+
+  const form = e.target;
+  const teacherId = form.dataset.teacherId;
+  const formData = new FormData(form);
+
+  const res = await fetch(`/admin/teacher/${teacherId}`, {
+    method: 'POST',
+    body: formData
+  });
+
+  if (res.ok) {
+    alert('Teacher Data updated successfully.Please refresh the page to see changes.');
+    closeEditForm();
+  } else {
+    const errorData = await res.json();
+    alert('Update failed: ' + (errorData.error || 'Unknown error'));
+  }
+});
+
+
+function closeEditForm() {
+  document.getElementById('editTeacherModal').classList.add('hidden');
+}
+
+</script>
+<script>
+async function toggleTeacherStatus(teacherId, button) {
+  const res = await fetch(`/admin/teacher/${teacherId}/toggle-status`, { method: 'POST' });
+  if (res.ok) {
+    const data = await res.json();
+    const newStatus = data.new_status;
+
+    button.textContent = newStatus === 'Active' ? 'Deactivate' : 'Activate';
+    button.style.backgroundColor = newStatus === 'Active' ? '#dc2626' : '#16a34a';
+
+    const row = button.closest('tr');
+    const statusSpan = row.querySelector('td:nth-child(4) span');
+    if (statusSpan) {
+      statusSpan.textContent = newStatus;
+      statusSpan.className = newStatus === 'Active' ? 'text-green-600' : 'text-red-600';
+    }
+  } else {
+    const err = await res.json();
+    alert('Failed to toggle status: ' + (err.error || 'Unknown error'));
+  }
+}
+window.addEventListener('DOMContentLoaded', () => {
+  const toggleButtons = document.querySelectorAll('#teachersTableBody button[onclick^="toggleTeacherStatus"]');
+  toggleButtons.forEach(button => {
+    const row = button.closest('tr');
+    const statusSpan = row.querySelector('td:nth-child(4) span');
+    const status = statusSpan ? statusSpan.textContent.trim() : '';
+
+    button.textContent = status.toLowerCase() === 'active' ? 'Deactivate' : 'Activate';
+    button.style.backgroundColor = status.toLowerCase() === 'active' ? '#dc2626' : '#16a34a';
+  });
+});
+</script>
+<script>
+  async function deleteTeacher(teacherId) {
+  if (!confirm('Are you sure you want to delete this teacher?')) {
+    return;
+  }
+
+  const response = await fetch(`/admin/teacher/${teacherId}`, {
+    method: 'DELETE'
+  });
+
+  if (response.ok) {
+    alert('Teacher deleted successfully.');
+    const row = document.querySelector(`tr[data-teacher-id="${teacherId}"]`);
+    if (row) {
+      row.remove();
+    }
+  } else {
+    const errData = await response.json();
+    alert('Failed to delete teacher: ' + (errData.error || 'Unknown error'));
+  }
+}
+
+
+function openAddTeacherForm() {
+  document.getElementById('addTeacherModal').classList.remove('hidden');
+}
+
+function closeAddTeacherForm() {
+  document.getElementById('addTeacherModal').classList.add('hidden');
+}
+
+document.getElementById('addTeacherForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const form = e.target;
+  const formData = new FormData(form);
+
+  // Simple password match validation
+  if (formData.get('password') !== formData.get('confirm_password')) {
+    alert('Passwords do not match.');
+    return;
+  }
+
+  // Add role="teacher" explicitly
+  formData.append('role', 'teacher');
+
+  const res = await fetch('/register', {
+    method: 'POST',
+    body: JSON.stringify({
+      full_name: formData.get('full_name'),   
+      username: formData.get('username'),
+      email: formData.get('email'),
+      password: formData.get('password'),
+      confirm_password: formData.get('confirm_password'),
+      role: 'teacher',
+      added_by_admin: true
+    }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (res.ok) {
+    alert('Teacher added successfully. Please check their email for verification.');
+    closeAddTeacherForm();
+    
+    location.reload();
+  } else {
+    const data = await res.json();
+    alert('Failed to add teacher: ' + (data.error || 'Unknown error'));
+  }
+});
+
+</script>
+
+<!--STUDENTS -->
+<script>
+  function filterStudents() {
+    const input = document.getElementById('studentSearch');
+    const filter = input.value.toLowerCase();
+    const rows = document.querySelectorAll('#studentsTableBody tr');
+    rows.forEach(row => {
+      const name = row.cells[0].textContent.toLowerCase();
+      const username = row.cells[1].textContent.toLowerCase();
+      if (name.includes(filter) || username.includes(filter)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+
+  async function openEditStudentForm(studentId) {
+    const response = await fetch(`/admin/student/${studentId}`);
+    if (!response.ok) {
+      alert('Failed to fetch student data. Refresh Page !');
+      return;
+    }
+    const student = await response.json();
+
+    document.getElementById('full_name_student').value = student.full_name || '';
+    document.getElementById('email_student').value = student.email || '';
+    document.getElementById('phone_student').value = student.phone || '';
+    document.getElementById('dob_student').value = student.dob || '';
+    document.getElementById('gender_student').value = student.gender || '';
+    document.getElementById('course_student').value = student.course || '';
+    document.getElementById('year_semester_student').value = student.year_semester || '';
+    document.getElementById('roll_no_student').value = student.roll_no || '';
+    document.getElementById('department_student').value = student.department_student || '';
+
+    const studentPhotoUrl = student.profile_picture
+      ? `/static/uploads/${student.profile_picture}`
+      : '/static/admin icon.jpg';
+    document.getElementById('edit_student_photo').src = studentPhotoUrl;
+
+    document.getElementById('editStudentForm').dataset.studentId = studentId;
+    document.getElementById('editStudentModal').classList.remove('hidden');
+  }
+
+  document.getElementById('editStudentForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    if (!confirm('Are you sure you want to save the changes?')) {
+      return;
+    }
+    const form = e.target;
+    const studentId = form.dataset.studentId;
+    const formData = new FormData(form);
+
+    const res = await fetch(`/admin/student/${studentId}`, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (res.ok) {
+      alert('Student Data updated successfully. Please refresh the page to see changes.');
+      closeEditStudentForm();
+    } else {
+      const errorData = await res.json();
+      alert('Update failed: ' + (errorData.error || 'Unknown error'));
+    }
+  });
+
+  function closeEditStudentForm() {
+    document.getElementById('editStudentModal').classList.add('hidden');
+  }
+
+  async function toggleStudentStatus(studentId, button) {
+    const res = await fetch(`/admin/student/${studentId}/toggle-status`, { method: 'POST' });
+    if (res.ok) {
+      const data = await res.json();
+      const newStatus = data.new_status;
+
+      button.textContent = newStatus === 'Active' ? 'Deactivate' : 'Activate';
+      button.style.backgroundColor = newStatus === 'Active' ? '#dc2626' : '#16a34a';
+
+      const row = button.closest('tr');
+      const statusSpan = row.querySelector('td:nth-child(4) span');
+      if (statusSpan) {
+        statusSpan.textContent = newStatus;
+        statusSpan.className = newStatus === 'Active' ? 'text-green-600' : 'text-red-600';
+      }
+    } else {
+      const err = await res.json();
+      alert('Failed to toggle status: ' + (err.error || 'Unknown error'));
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const toggleButtons = document.querySelectorAll('#studentsTableBody button[onclick^="toggleStudentStatus"]');
+    toggleButtons.forEach(button => {
+      const row = button.closest('tr');
+      const statusSpan = row.querySelector('td:nth-child(4) span');
+      const status = statusSpan ? statusSpan.textContent.trim() : '';
+      button.textContent = status.toLowerCase() === 'active' ? 'Deactivate' : 'Activate';
+      button.style.backgroundColor = status.toLowerCase() === 'active' ? '#dc2626' : '#16a34a';
+    });
+  });
+
+  async function deleteStudent(studentId) {
+    if (!confirm('Are you sure you want to delete this student?')) {
+      return;
+    }
+    const response = await fetch(`/admin/student/${studentId}`, { method: 'DELETE' });
+    if (response.ok) {
+      alert('Student deleted successfully.');
+      const row = document.querySelector(`tr[data-student-id="${studentId}"]`);
+      if (row) {
+        row.remove();
+      }
+    } else {
+      const errData = await response.json();
+      alert('Failed to delete student: ' + (errData.error || 'Unknown error'));
+    }
+  }
+
+  function openAddStudentForm() {
+    document.getElementById('addStudentModal').classList.remove('hidden');
+  }
+
+  function closeAddStudentForm() {
+    document.getElementById('addStudentModal').classList.add('hidden');
+  }
+
+  document.getElementById('addStudentForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+
+    if (formData.get('password') !== formData.get('confirm_password')) {
+      alert('Passwords do not match.');
+      return;
+    }
+
+    formData.append('role', 'student');
+
+    const res = await fetch('/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        full_name: formData.get('full_name'),   
+        username: formData.get('username'),
+        email: formData.get('email'),
+        password: formData.get('password'),
+        confirm_password: formData.get('confirm_password'),
+        role: 'student',
+        added_by_admin: true
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (res.ok) {
+      alert('Student added successfully. Please check their email for verification.');
+      closeAddStudentForm();
+      location.reload();
+    } else {
+      const data = await res.json();
+      alert('Failed to add student: ' + (data.error || 'Unknown error'));
+    }
+  });
+</script>
+
+<!--ADMINS -->
+
+<script>
+ // Filter admins list by search input
+function filterAdmins() {
+  const input = document.getElementById('adminSearch');
+  const filter = input.value.toLowerCase();
+  const rows = document.querySelectorAll('#adminsTableBody tr');
+
+  rows.forEach(row => {
+    const name = row.cells[0].textContent.toLowerCase();
+    const username = row.cells[1].textContent.toLowerCase();
+    if (name.includes(filter) || username.includes(filter)) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+}
+
+// Open Add Admin Modal
+function openAddAdminForm() {
+  document.getElementById('addAdminModal').classList.remove('hidden');
+}
+
+// Close Add Admin Modal
+function closeAddAdminForm() {
+  document.getElementById('addAdminModal').classList.add('hidden');
+}
+
+// Open Edit Admin Modal and populate fields
+async function openEditAdminForm(adminId) {
+  const response = await fetch(`/admin/admin/${adminId}`);
+  if (!response.ok) {
+    alert('Failed to fetch admin data.');
+    return;
+  }
+  const admin = await response.json();
+
+  document.getElementById('full_name_admin').value = admin.full_name || '';
+  document.getElementById('email_admin').value = admin.email || '';
+  document.getElementById('phone_admin').value = admin.phone || '';
+  document.getElementById('dob_admin').value = admin.dob || '';
+  document.getElementById('gender_admin').value = admin.gender || '';
+
+  const photoUrl = admin.profile_picture
+    ? `/static/uploads/${admin.profile_picture}`
+    : '/static/admin icon.jpg';
+  document.getElementById('edit_admin_photo').src = photoUrl;
+
+  
+  // Store admin ID on form dataset
+  document.getElementById('editAdminForm').dataset.adminId = adminId;
+
+  // Show modal
+  document.getElementById('editAdminModal').classList.remove('hidden');
+}
+
+
+// Close Edit Admin Modal
+function closeEditAdminForm() {
+  document.getElementById('editAdminModal').classList.add('hidden');
+}
+
+// Submit Edit Admin Form
+document.addEventListener('DOMContentLoaded', () => {
+  const editAdminForm = document.getElementById('editAdminForm');
+  if (editAdminForm) {
+    editAdminForm.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      if (!confirm('Are you sure you want to save the changes?')) return;
+
+      const form = e.target;
+      const adminId = form.dataset.adminId;
+      const formData = new FormData(form);
+
+      try {
+        const res = await fetch(`/admin/admin/${adminId}`, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (res.ok) {
+          alert('Admin profile updated successfully. Please refresh the page.');
+          closeEditAdminForm();
+        } else {
+          const errorData = await res.json();
+          alert('Update failed: ' + (errorData.error || 'Unknown error'));
+        }
+      } catch (err) {
+        alert('An error occurred: ' + err.message);
+      }
+    });
+  }
+});
+
+// Submit Add Admin Form
+document.addEventListener('DOMContentLoaded', () => {
+  const addAdminForm = document.getElementById('addAdminForm');
+  if (addAdminForm) {
+    addAdminForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+
+      if (formData.get('password') !== formData.get('confirm_password')) {
+        alert('Passwords do not match.');
+        return;
+      }
+
+      const res = await fetch('/register', {
+        method: 'POST',
+        body: JSON.stringify({
+          full_name: formData.get('full_name'),
+          username: formData.get('username'),
+          email: formData.get('email'),
+          password: formData.get('password'),
+          confirm_password: formData.get('confirm_password'),
+          role: 'admin',
+          added_by_admin: true
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (res.ok) {
+        alert('Admin added successfully. Please check their email for verification.');
+        closeAddAdminForm();
+        location.reload();
+      } else {
+        const data = await res.json();
+        alert('Failed to add admin: ' + (data.error || 'Unknown error'));
+      }
+    });
+  }
+});
+
+
+// Toggle admin status Activate/Deactivate
+async function toggleAdminStatus(adminId, button) {
+  const res = await fetch(`/admin/admin/${adminId}/toggle-status`, { method: 'POST' });
+  if (res.ok) {
+    const data = await res.json();
+    const newStatus = data.new_status;
+
+    button.textContent = newStatus === 'Active' ? 'Deactivate' : 'Activate';
+    button.style.backgroundColor = newStatus === 'Active' ? '#dc2626' : '#16a34a';
+
+    const row = button.closest('tr');
+    const statusSpan = row.querySelector('td:nth-child(4) span');
+    if (statusSpan) {
+      statusSpan.textContent = newStatus;
+      statusSpan.className = newStatus === 'Active' ? 'text-green-600' : 'text-red-600';
+    }
+  } else {
+    const err = await res.json();
+    alert('Failed to toggle status: ' + (err.error || 'Unknown error'));
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const toggleButtons = document.querySelectorAll('#adminsTableBody button[onclick^="toggleAdminStatus"]');
+  toggleButtons.forEach(button => {
+    const row = button.closest('tr');
+    const statusSpan = row.querySelector('td:nth-child(4) span');
+    const status = statusSpan ? statusSpan.textContent.trim() : '';
+
+    button.textContent = status.toLowerCase() === 'active' ? 'Deactivate' : 'Activate';
+    button.style.backgroundColor = status.toLowerCase() === 'active' ? '#dc2626' : '#16a34a';
+  });
+});
+
+// Delete admin with confirmation
+async function deleteAdmin(adminId) {
+  if (!confirm('Are you sure you want to delete this admin?')) return;
+
+  const response = await fetch(`/admin/admin/${adminId}`, { method: 'DELETE' });
+  if (response.ok) {
+    alert('Admin deleted successfully.');
+    const row = document.querySelector(`tr[data-admin-id="${adminId}"]`);
+    if (row) row.remove();
+  } else {
+    const errData = await response.json();
+    alert('Failed to delete admin: ' + (errData.error || 'Unknown error'));
+  }
+}
+
+
+</script>
+
+<!-- EDIT PROFILE-->
+<script>
+  function populateProfileFields(data) {
+    document.getElementById('view-profile-picture').src = data.profile_picture_url || '/static/admin icon.jpg';
+    document.getElementById('view_username').innerText = data.username || '';
+    document.getElementById('view_full_name').innerText = data.full_name || '';
+    document.getElementById('view_dob').innerText = data.dob || '';
+    document.getElementById('view_gender').innerText = data.gender || '';
+    document.getElementById('view_email').innerText = data.email || '';
+    document.getElementById('view_alt_email').innerText = data.alt_email || '';
+    document.getElementById('view_phone').innerText = data.phone || '';
+    document.getElementById('view_street').innerText = data.street || '';
+    document.getElementById('view_city').innerText = data.city || '';
+    document.getElementById('view_state').innerText = data.state || '';
+    document.getElementById('view_zip').innerText = data.zip || '';
+    document.getElementById('view_country').innerText = data.country || '';
+
+    // Edit mode
+    document.getElementById('edit-profile-picture-preview').src = data.profile_picture_url || '/static/admin icon.jpg';
+    document.getElementById('edit_username').value = data.username || '';
+    document.getElementById('edit_full_name').value = data.full_name || '';
+    document.getElementById('edit_dob').value = data.dob || '';
+    document.getElementById('edit_gender').value = data.gender || '';
+    document.getElementById('edit_email').value = data.email || '';
+    document.getElementById('edit_alt_email').value = data.alt_email || '';
+    document.getElementById('edit_phone').value = data.phone || '';
+    document.getElementById('edit_street').value = data.street || '';
+    document.getElementById('edit_city').value = data.city || '';
+    document.getElementById('edit_state').value = data.state || '';
+    document.getElementById('edit_zip').value = data.zip || '';
+    document.getElementById('edit_country').value = data.country || '';
+  }
+
+  function fetchAndDisplayProfile() {
+    fetch('/admin/get_profile')
+      .then(response => response.json())
+      .then(data => populateProfileFields(data))
+      .catch(() => {
+        const msgEl = document.getElementById('message');
+        msgEl.innerText = 'Failed to load profile data.';
+        msgEl.style.color = 'red';
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchAndDisplayProfile();
+
+    document.getElementById('editBtn').addEventListener('click', () => {
+      document.getElementById('profile-view').style.display = 'none';
+      document.getElementById('profile-edit').style.display = 'block';
+      document.getElementById('message').innerText = '';
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+      document.getElementById('profile-edit').style.display = 'none';
+      document.getElementById('profile-view').style.display = 'block';
+      fetchAndDisplayProfile();  // reset to original data
+      document.getElementById('message').innerText = '';
+    });
+
+    const profileInput = document.getElementById('edit-profile-picture');
+    const profilePreview = document.getElementById('edit-profile-picture-preview');
+
+    // Create or ensure image_error div for showing validation errors
+    let imageError = document.getElementById('image_error');
+    if (!imageError) {
+      imageError = document.createElement('div');
+      imageError.id = 'image_error';
+      imageError.style.color = 'red';
+      imageError.style.marginTop = '5px';
+      profileInput.parentNode.insertBefore(imageError, profileInput.nextSibling);
+    }
+
+    const MAX_SIZE_MB = 2;
+    const MAX_WIDTH = 1024;
+    const MAX_HEIGHT = 1024;
+
+    profileInput.addEventListener('change', function () {
+      imageError.textContent = '';
+      if (!this.files[0]) {
+        profilePreview.src = '/static/admin icon.jpg';
+        return;
+      }
+
+      const file = this.files[0];
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+      if (!validTypes.includes(file.type)) {
+        imageError.textContent = 'Invalid file type. Please upload JPG, PNG, or GIF image.';
+        profileInput.value = '';
+        profilePreview.src = '/static/admin icon.jpg';
+        return;
+      }
+
+      if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+        imageError.textContent = `File too large. Max size is ${MAX_SIZE_MB}MB.`;
+        profileInput.value = '';
+        profilePreview.src = '/static/admin icon.jpg';
+        return;
+      }
+
+      const img = new Image();
+      img.onload = function () {
+        if (img.width > MAX_WIDTH || img.height > MAX_HEIGHT) {
+          imageError.textContent = `Image dimensions too large. Max allowed: ${MAX_WIDTH}x${MAX_HEIGHT}px.`;
+          profileInput.value = '';
+          profilePreview.src = '/static/admin icon.jpg';
+        } else {
+          imageError.textContent = '';
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            profilePreview.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      img.onerror = function () {
+        imageError.textContent = 'Invalid image file.';
+        profileInput.value = '';
+        profilePreview.src = '/static/admin icon.jpg';
+      };
+      img.src = URL.createObjectURL(file);
+    });
+
+    document.getElementById('profile-edit').addEventListener('submit', async e => {
+      e.preventDefault();
+      if (!confirm('Are you sure you want to save changes?')) return;
+
+      const form = e.target;
+      const formData = new FormData(form);
+
+      try {
+        const res = await fetch('/admin/update_profile', {
+          method: 'POST',
+          body: formData
+        });
+        const result = await res.json();
+
+        if (result.error) {
+          document.getElementById('message').innerText = result.error;
+          document.getElementById('message').style.color = 'red';
+        } else {
+          document.getElementById('message').innerText = 'Profile updated successfully!';
+          document.getElementById('message').style.color = 'green';
+          document.getElementById('profile-edit').style.display = 'none';
+          document.getElementById('profile-view').style.display = 'block';
+          populateProfileFields(result);
+        }
+      } catch (err) {
+        document.getElementById('message').innerText = 'Failed to save profile.';
+        document.getElementById('message').style.color = 'red';
+      }
+    });
+  });
+</script>
+
+
+</html> 

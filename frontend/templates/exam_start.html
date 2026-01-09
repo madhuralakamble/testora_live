@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <title>Exam: {{ exam.title }}</title>
+
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    /* --- Visual theme tweaks --- */
+    :root{
+      --accent-1: #6b21a8; /* deep purple */
+      --accent-2: #8b5cf6; /* soft violet */
+      --accent-3: #ec4899; /* pink accent */
+      --muted: #6b7280;
+      --glass: rgba(255,255,255,0.72);
+      --card-shadow: 0 8px 30px rgba(99,102,241,0.08);
+    }
+
+    html,body { height: 100%; }
+
+    /* body wallpaper gradient */
+    body {
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 40%, #fff7ed 100%);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Header accent */
+    .brand-badge {
+      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    /* Card glass effect */
+    .glass-card {
+      background: var(--glass);
+      backdrop-filter: blur(6px) saturate(120%);
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(124,58,237,0.08);
+    }
+
+    /* Question navigator buttons styling (refined) */
+    .nav-btn {
+      width: 46px;
+      height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(99,102,241,0.12);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      user-select: none;
+      transition: transform .12s ease, box-shadow .12s ease;
+      box-shadow: 0 2px 6px rgba(16,24,40,0.03);
+    }
+    .nav-btn:active { transform: translateY(1px); }
+    .nav-btn.gray { background: linear-gradient(180deg,#f3f4f6,#ffffff); color:#4b5563; border-color:#e6e7ee; }
+    .nav-btn.green { background: linear-gradient(90deg,#10b981,#16a34a); color:#ffffff; border-color:rgba(16,185,129,0.9); }
+    .nav-btn.orange { background: linear-gradient(90deg,#fb923c,#f97316); color:#fff; border-color:rgba(249,115,22,0.9); }
+    .nav-btn.yellow { background: linear-gradient(90deg,#ffd54d,#facc15); color:#382b00; border-color:rgba(250,204,21,0.9); }
+    .nav-btn.current {
+      outline: 3px solid rgba(139,92,246,0.12);
+      transform: scale(1.06);
+      box-shadow: 0 6px 18px rgba(139,92,246,0.12);
+    }
+
+    /* Option styles */
+    .option {
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid rgba(99,102,241,0.06);
+      background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,255,0.95));
+      transition: box-shadow .12s ease, transform .08s ease, border-color .12s ease;
+      cursor: pointer;
+    }
+    .option:hover { box-shadow: 0 6px 22px rgba(99,102,241,0.06); transform: translateY(-2px); }
+    .option input[type="radio"] { width:18px; height:18px; margin-top:4px; accent-color: #7c3aed; }
+    .option.selected {
+      border-color: rgba(124,58,237,0.18);
+      box-shadow: 0 10px 30px rgba(124,58,237,0.06);
+      transform: translateY(-2px);
+      background: linear-gradient(90deg, rgba(139,92,246,0.06), rgba(236,72,153,0.02));
+    }
+
+    /* Textarea styling */
+    textarea {
+      width:100%;
+      padding:12px;
+      border-radius:0.5rem;
+      border:1px solid rgba(99,102,241,0.08);
+      min-height:120px;
+      resize:vertical;
+      transition: box-shadow .12s ease, border-color .12s ease;
+      font-family: inherit;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: rgba(124,58,237,0.2);
+      box-shadow: 0 8px 30px rgba(124,58,237,0.06);
+    }
+
+    /* Sticky right summary box */
+    .summary {
+      position: sticky;
+      top: 82px;
+      height: fit-content;
+    }
+
+    /* Modal tweaks */
+    .modal-card { max-width:520px; border-radius:12px; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 60;
+      background: linear-gradient(90deg,#111827,#1f2937);
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 10px;
+      box-shadow: 0 12px 36px rgba(2,6,23,0.45);
+      display: none;
+    }
+    .toast.show { display:block; animation: toast-in .28s ease; }
+    @keyframes toast-in { from { transform: translateY(10px); opacity:0 } to { transform: translateY(0); opacity:1 } }
+
+    /* Responsive: shrink left-section on small screens */
+    @media (max-width: 900px) {
+      .summary { position: relative; top: auto; margin-top: 8px; }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen antialiased text-gray-800">
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <div class="max-w-7xl mx-auto px-5 py-8">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-xl flex items-center justify-center bg-white shadow-sm glass-card">
+          <!-- small logo mark -->
+          <svg class="w-9 h-9" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="20" height="20" rx="5" fill="#8b5cf6" />
+            <path d="M7 12h10" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M12 7v10" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="text-sm text-muted-foreground">Online Examination • <span class="font-medium text-sm text-gray-500">Pro-Mode</span></div>
+          <h1 class="text-2xl md:text-3xl font-bold brand-badge">{{ exam.title }}</h1>
+          <p class="text-sm text-gray-600">Subject: <span class="font-semibold text-gray-800">{{ exam.subject }}</span> • Date: <span class="text-gray-700">{{ exam.date }}</span></p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="text-right">
+          <div class="text-xs text-gray-500">Candidate</div>
+          <div class="flex items-center gap-3">
+            <img src="{{ student.student_url }}" alt="avatar" class="w-12 h-12 rounded-full border-2 border-purple-600 shadow-sm" />
+            <div class="text-sm font-semibold">{{ student.name }}</div>
+          </div>
+        </div>
+        <div class="bg-gradient-to-tr from-purple-600 to-pink-500 text-white px-4 py-2 rounded-xl shadow-lg">
+          <div class="text-xs">Duration</div>
+          <div class="text-sm font-bold">{{ exam.duration }} mins</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Main left: instructions/exam area -->
+      <div class="lg:col-span-2 space-y-5">
+
+        <!-- Instructions card -->
+        <section id="instructions" class="glass-card p-5 rounded-2xl border">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h2 class="text-lg font-semibold text-gray-800">Before you start — Read this</h2>
+              <p class="text-sm text-gray-500 mt-1">Important instructions to help you succeed. The system enforces exam integrity.</p>
+            </div>
+            <div class="text-sm text-gray-500 text-right">
+              <div class="mb-1">Questions: <span id="total-questions" class="font-semibold">0</span></div>
+              <div>Mode: <span class="font-semibold text-purple-700">Full Screen</span></div>
+            </div>
+          </div>
+
+          <ul class="mt-4 grid gap-2 text-gray-700 text-sm">
+            <li>• The exam runs in fullscreen — leaving fullscreen or switching tabs will auto-submit.</li>
+            <li>• Answers autosave every <span class="font-semibold">15s</span>. You can submit early.</li>
+            <li>• Use the navigator to jump between questions; color codes show status.</li>
+            <li>• Do not close or refresh your browser during the exam.</li>
+          </ul>
+
+          <div class="mt-5 flex gap-3">
+            <button id="start-btn" class="px-5 py-3 rounded-full bg-gradient-to-r from-purple-600 to-violet-400 text-white font-semibold hover:scale-[1.02] shadow-lg">Start Exam</button>
+            <button id="practice-btn" class="px-5 py-3 rounded-full border border-purple-200 text-purple-700 bg-white hover:bg-purple-50">Preview Questions</button>
+            <div class="ml-auto text-sm text-gray-500 self-center">Good luck — take a deep breath 😌</div>
+          </div>
+        </section>
+
+        <!-- Exam area (hidden until start) -->
+        <main id="exam-interface" class="hidden glass-card p-6 rounded-2xl border">
+
+          <!-- Top bar with timer and progress -->
+          <div class="flex items-center justify-between gap-4 mb-4">
+            <div class="flex items-center gap-4">
+              <div id="timer-card" class="p-3 rounded-xl bg-white shadow-sm border flex items-center gap-3">
+                <svg class="w-6 h-6 text-red-500" viewBox="0 0 24 24" fill="none"><path d="M12 8v5l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.2"/></svg>
+                <div>
+                  <div class="text-xs text-gray-500">Time left</div>
+                  <div id="time-left" class="font-mono text-lg font-semibold text-red-600">00:00</div>
+                </div>
+              </div>
+
+              <div class="w-72">
+                <div class="text-xs text-gray-500">Progress</div>
+                <div class="w-full h-3 rounded-full bg-gray-100 overflow-hidden mt-1">
+                  <div id="progress-bar" class="h-full rounded-full" style="width:0%; background: linear-gradient(90deg,#7c3aed,#ec4899)"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <button id="submit-btn" disabled class="px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 disabled:opacity-50">Submit Exam</button>
+              <button id="fullscreen-exit" class="px-4 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50">Exit Fullscreen</button>
+            </div>
+          </div>
+
+          <!-- question navigator row -->
+          <nav id="question-nav" class="grid grid-cols-12 gap-2 mb-5"></nav>
+
+          <!-- question + options -->
+          <article id="questions-container" class="prose max-w-none bg-white p-5 rounded-xl border">
+            <!-- content populated by JS -->
+          </article>
+
+          <!-- Action buttons -->
+          <section class="flex items-center flex-wrap justify-between gap-3 mt-4">
+            <div class="flex gap-3">
+              <button id="prev-btn" disabled class="px-5 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50 disabled:opacity-40">Previous</button>
+              <button id="next-btn" class="px-5 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50">Next</button>
+              <button id="mark-btn" class="px-4 py-2 rounded-lg bg-yellow-300 hover:bg-yellow-400 text-yellow-900 font-semibold">Mark for Review</button>
+              <button id="clear-btn" class="px-4 py-2 rounded-lg bg-gray-100 border text-gray-700 hover:bg-gray-200">Clear</button>
+            </div>
+
+            <div class="text-sm text-gray-500">Answered: <span id="answered-count" class="font-semibold">0</span> / <span id="total-count" class="font-semibold">0</span></div>
+          </section>
+
+        </main>
+      </div>
+
+      <!-- Right: summary and quick actions -->
+      <aside class="summary space-y-5">
+        <div class="glass-card p-5 rounded-2xl border">
+          <h3 class="font-semibold text-gray-800">Quick Summary</h3>
+          <p class="text-sm text-gray-500 mt-1">Jump to any question or review marked ones quickly.</p>
+
+          <div class="mt-4">
+            <div class="flex items-center justify-between text-sm text-gray-600 mb-2">
+              <div>Not visited</div>
+              <div id="not-visited-count">0</div>
+            </div>
+            <div class="flex items-center justify-between text-sm text-gray-600 mb-2">
+              <div>Answered</div>
+              <div id="sidebar-answered">0</div>
+            </div>
+            <div class="flex items-center justify-between text-sm text-gray-600 mb-2">
+              <div>Marked for review</div>
+              <div id="sidebar-marked">0</div>
+            </div>
+          </div>
+
+          <div class="mt-4 flex gap-2">
+            <button id="show-all" class="flex-1 px-3 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50">Show All</button>
+            <button id="show-marked" class="px-3 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50">Marked</button>
+          </div>
+        </div>
+
+        <div class="glass-card p-4 rounded-xl border">
+          <h4 class="font-semibold text-gray-800">Actions</h4>
+          <div class="mt-3 flex flex-col gap-2">
+            <button id="review-btn" class="w-full px-3 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-violet-400 text-white font-semibold">Review & Submit</button>
+            <button id="download-summary" class="w-full px-3 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50">Download Answers (JSON)</button>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+
+    <!-- Submission Modal -->
+    <div id="submitModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4">
+      <div class="modal-card bg-white p-6 shadow-xl modal-card rounded-2xl">
+        <h3 class="text-xl font-bold mb-2">Confirm submission</h3>
+        <p class="text-gray-600 mb-4">Are you sure you want to submit your exam now? You will not be able to change your answers.</p>
+        <div class="flex gap-3 justify-end">
+          <button id="cancelSubmit" class="px-4 py-2 rounded-lg bg-white border text-gray-700 hover:bg-gray-50">Cancel</button>
+          <button id="confirmSubmit" class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">Submit</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JSON data from server -->
+  <script type="application/json" id="exam-data">
+  {
+    "examId": {{ exam.id|tojson }},
+    "token": {{ token|tojson }},
+    "duration": {{ exam.duration }},
+    "studentId": {{ student.id }}
+  }
+  </script>
+
+  <script>
+    /* ======== App state ======== */
+    const examData = JSON.parse(document.getElementById('exam-data').textContent);
+    let examId = examData.examId;
+    let token = examData.token;
+    let durationMinutes = examData.duration;
+    let studentId = examData.studentId;
+
+    let questions = [];
+    let answers = {};
+    let markedForReview = new Set();
+    let currentQuestionIndex = 0;
+    let timerInterval;
+    let timeLeftSeconds = 0;
+    let isSubmitting = false;
+    let isStudentSubmitting = false;
+    let isAutoSaving = false;
+    let shortcutWarningCount = 0;
+
+    /* ======== DOM refs ======== */
+    const instructionsDiv = document.getElementById('instructions');
+    const examInterface = document.getElementById('exam-interface');
+    const timeLeftSpan = document.getElementById('time-left');
+    const questionsContainer = document.getElementById('questions-container');
+    const questionNav = document.getElementById('question-nav');
+    const startBtn = document.getElementById('start-btn');
+    const practiceBtn = document.getElementById('practice-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const markBtn = document.getElementById('mark-btn');
+    const clearBtn = document.getElementById('clear-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const totalQuestionsSpan = document.getElementById('total-questions');
+    const totalCountSpan = document.getElementById('total-count');
+    const answeredCountSpan = document.getElementById('answered-count');
+    const sidebarAnswered = document.getElementById('sidebar-answered');
+    const sidebarMarked = document.getElementById('sidebar-marked');
+    const notVisitedCount = document.getElementById('not-visited-count');
+    const toastEl = document.getElementById('toast');
+    const fullscreenExitBtn = document.getElementById('fullscreen-exit');
+    const downloadSummaryBtn = document.getElementById('download-summary');
+    const reviewBtn = document.getElementById('review-btn');
+    const showMarkedBtn = document.getElementById('show-marked');
+    const showAllBtn = document.getElementById('show-all');
+
+    /* ======== Utility UI functions ======== */
+    function showToast(message, time = 2400) {
+      toastEl.textContent = message;
+      toastEl.classList.add('show');
+      setTimeout(() => toastEl.classList.remove('show'), time);
+    }
+
+    function setCounts() {
+      const total = questions.length;
+      const answered = Object.keys(answers).length;
+      const marked = markedForReview.size;
+      const notVisited = Math.max(0, total - (answered + marked)); // rough
+      totalQuestionsSpan.textContent = total;
+      totalCountSpan.textContent = total;
+      answeredCountSpan.textContent = answered;
+      sidebarAnswered.textContent = answered;
+      sidebarMarked.textContent = marked;
+      notVisitedCount.textContent = notVisited;
+      const pct = total === 0 ? 0 : Math.round((answered / total) * 100);
+      progressBar.style.width = pct + '%';
+    }
+
+    /* ======== Fullscreen helpers ======== */
+    function activateFullscreen() {
+      const el = document.documentElement;
+      if (el.requestFullscreen) el.requestFullscreen();
+      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      else if (el.msRequestFullscreen) el.msRequestFullscreen();
+    }
+
+    function exitFullscreen() {
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      }
+    }
+
+    fullscreenExitBtn.addEventListener('click', () => {
+      exitFullscreen();
+      showToast('Exited fullscreen (if supported).');
+    });
+
+    /* ======== Data loading ======== */
+    function loadQuestions() {
+      fetch(`/api/exams/${examId}/questions?token=${token}`)
+        .then(resp => {
+          if (!resp.ok) throw new Error('Failed to fetch');
+          return resp.json();
+        })
+        .then(data => {
+          // expected shape: { questions: [...] }
+          questions = data.questions || [];
+          renderQuestionNav();
+          showQuestion(0);
+          submitBtn.disabled = false;
+          startAutoSave();
+          setCounts();
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Failed to load questions.');
+        });
+    }
+
+    /* ======== Question navigator ======== */
+    function renderQuestionNav() {
+      questionNav.innerHTML = '';
+      questions.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'nav-btn gray';
+        btn.textContent = idx + 1;
+        btn.title = `Go to question ${idx+1}`;
+        updateNavBtnColor(btn, idx);
+
+        btn.addEventListener('click', () => showQuestion(idx));
+        questionNav.appendChild(btn);
+      });
+    }
+
+    function updateNavBtnColor(btn, idx) {
+      btn.className = 'nav-btn';
+      if (markedForReview.has(idx)) {
+        btn.classList.add('orange');
+      } else if (answers[questions[idx].id]) {
+        btn.classList.add('green');
+      } else if (idx === currentQuestionIndex) {
+        btn.classList.add('yellow', 'current');
+      } else {
+        btn.classList.add('gray');
+      }
+    }
+
+    /* ======== Show question ======== */
+    function showQuestion(index) {
+      if (index < 0 || index >= questions.length) return;
+      currentQuestionIndex = index;
+      const q = questions[index];
+      questionsContainer.innerHTML = '';
+
+      // header
+      const header = document.createElement('div');
+      header.className = 'mb-3 flex items-start justify-between';
+      header.innerHTML = `
+        <div>
+          <div class="text-sm text-gray-500">Question ${index + 1} of ${questions.length}</div>
+          <h3 class="text-lg font-semibold text-gray-800">${q.question_text}</h3>
+          ${q.explanation ? `<div class="text-xs text-gray-500 mt-1">${q.explanation}</div>` : ''}
+        </div>
+        <div class="text-sm text-gray-500">Type: <span class="font-semibold">${q.question_type}</span></div>
+      `;
+      questionsContainer.appendChild(header);
+
+      // options or textarea
+      const body = document.createElement('div');
+      body.className = 'space-y-3';
+
+      if (q.question_type === 'objective') {
+        q.options.forEach(opt => {
+          const wrap = document.createElement('label');
+          wrap.className = 'option';
+          if (answers[q.id] === opt) wrap.classList.add('selected');
+
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.name = `q${q.id}`;
+          radio.value = opt;
+          radio.checked = answers[q.id] === opt;
+          radio.addEventListener('change', (ev) => {
+            saveAnswer(q.id, ev.target.value);
+            // visual toggle
+            const siblings = Array.from(body.querySelectorAll('.option'));
+            siblings.forEach(s => s.classList.remove('selected'));
+            wrap.classList.add('selected');
+          });
+
+          const txt = document.createElement('div');
+          txt.innerHTML = `<div class="text-sm text-gray-800">${opt}</div>`;
+
+          wrap.appendChild(radio);
+          wrap.appendChild(txt);
+          body.appendChild(wrap);
+        });
+      } else {
+        const ta = document.createElement('textarea');
+        ta.name = `q${q.id}`;
+        ta.value = answers[q.id] || '';
+        ta.placeholder = 'Type your answer here...';
+        ta.addEventListener('input', (ev) => saveAnswer(q.id, ev.target.value));
+        body.appendChild(ta);
+      }
+
+      questionsContainer.appendChild(body);
+      updateNavigationButtons();
+      updateMarkedForReviewButton();
+      renderQuestionNav();
+      setCounts();
+    }
+
+    function saveAnswer(qId, val) {
+      if (typeof val === 'string' && val.trim() === '') {
+        delete answers[qId];
+      } else {
+        answers[qId] = val;
+      }
+      // reflect changes
+      setCounts();
+      renderQuestionNav();
+    }
+
+    function updateNavigationButtons() {
+      prevBtn.disabled = currentQuestionIndex === 0;
+      nextBtn.disabled = currentQuestionIndex === questions.length - 1;
+    }
+
+    function updateMarkedForReviewButton() {
+      if (markedForReview.has(currentQuestionIndex)) {
+        markBtn.textContent = 'Unmark Review';
+      } else {
+        markBtn.textContent = 'Mark for Review';
+      }
+    }
+
+    prevBtn.onclick = () => showQuestion(currentQuestionIndex - 1);
+    nextBtn.onclick = () => showQuestion(currentQuestionIndex + 1);
+
+    markBtn.onclick = () => {
+      if (markedForReview.has(currentQuestionIndex)) {
+        markedForReview.delete(currentQuestionIndex);
+        showToast('Removed mark for review');
+      } else {
+        markedForReview.add(currentQuestionIndex);
+        showToast('Marked for review');
+      }
+      updateMarkedForReviewButton();
+      renderQuestionNav();
+      setCounts();
+    };
+
+    clearBtn.onclick = () => {
+      const qId = questions[currentQuestionIndex].id;
+      delete answers[qId];
+      renderQuestionNav();
+      showQuestion(currentQuestionIndex);
+      setCounts();
+      showToast('Answer cleared');
+    };
+
+    /* ======== Timer & autosave ======== */
+    function startTimer() {
+      timeLeftSeconds = durationMinutes * 60;
+      updateTimerDisplay();
+      timerInterval = setInterval(() => {
+        timeLeftSeconds--;
+        updateTimerDisplay();
+        if (timeLeftSeconds <= 0) {
+          clearInterval(timerInterval);
+          showToast('Time is up — auto submitting...');
+          submitExam(false);
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeLeftSeconds / 60);
+      const seconds = timeLeftSeconds % 60;
+      timeLeftSpan.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+      if (timeLeftSeconds <= 60) {
+        timeLeftSpan.classList.add('text-red-600');
+      }
+    }
+
+    function startAutoSave() {
+      setInterval(() => {
+        isAutoSaving = true;
+        fetch(`/api/exams/${examId}/autosave?token=${token}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ answers, cheating: false })
+        })
+        .then(resp => {
+          if (!resp.ok) console.warn('Auto-save failed.');
+        })
+        .catch(() => console.warn('Auto-save error.'))
+        .finally(() => { isAutoSaving = false; });
+      }, 15000);
+    }
+
+    /* ======== Submission logic ======== */
+    function submitExam(cheating = false) {
+      if (isSubmitting) return;
+      isSubmitting = true;
+
+      // If intentional or autosave, cheating should be false
+      if (isStudentSubmitting || isAutoSaving) cheating = false;
+
+      fetch(`/api/exams/${examId}/submit?token=${token}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers, cheating: cheating })
+      })
+      .then(resp => {
+        if (!resp.ok) throw new Error('submit failed');
+        return resp.json();
+      })
+      .then(data => {
+        closeSubmitModal();
+        exitFullscreen();
+        showToast('Submitted. Redirecting...', 1200);
+        setTimeout(() => {
+          window.location.href = `/exam/${examId}/result?token=${token}`;
+        }, 900);
+      })
+      .catch((err) => {
+        console.error(err);
+        alert('Submission failed. Please check connection.');
+        isSubmitting = false;
+      });
+    }
+
+    // Show the modal instead of confirm()
+    function showSubmitModal() {
+      document.getElementById('submitModal').style.display = 'flex';
+    }
+
+    // Hide modal if user cancels
+    function closeSubmitModal() {
+      document.getElementById('submitModal').style.display = 'none';
+    }
+
+    // Handle actual submission from modal
+    function confirmSubmit() {
+      isStudentSubmitting = true;
+      clearInterval(timerInterval);
+      submitExam(false);
+    }
+
+    // Wire modal buttons
+    document.getElementById('confirmSubmit').onclick = confirmSubmit;
+    document.getElementById('cancelSubmit').onclick = closeSubmitModal;
+
+    // Click outside modal to close
+    window.onclick = function(event) {
+      const modal = document.getElementById('submitModal');
+      if (event.target === modal) closeSubmitModal();
+    };
+
+    // Wire submit button (opens modal)
+    submitBtn.onclick = () => showSubmitModal();
+
+    /* ======== Anti-cheating detectors ======== */
+    function detectCheating() {
+      if (!isSubmitting && !isStudentSubmitting && !isAutoSaving) {
+        showToast('Integrity violation detected — submitting exam...', 2400);
+        submitExam(true);
+      }
+    }
+
+    // Visibility change
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        showToast('You switched tab — exam will be submitted.', 2200);
+        detectCheating();
+      }
+    });
+
+    // Fullscreen change
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) {
+        showToast('Exited fullscreen — submitting exam.', 2200);
+        detectCheating();
+      }
+    });
+
+    // Blur (window focus loss)
+    window.addEventListener('blur', () => {
+      showToast('Window lost focus — integrity check.', 1800);
+      detectCheating();
+    });
+
+    // Disable right-click
+    document.addEventListener("contextmenu", function(e) {
+      e.preventDefault();
+      showToast('Right-click disabled.');
+      detectCheating();
+    });
+
+    // Block many common shortcuts
+    document.addEventListener('keydown', function(e) {
+      const key = e.key.toLowerCase();
+      // list of forbidden combos
+      const forbidden = (
+        (e.ctrlKey && ['c','x','v','t','n','w','r'].includes(key)) ||
+        (e.ctrlKey && e.shiftKey && ['i','c','j'].includes(key)) ||
+        (key === 'f12')
+      );
+
+      if (forbidden) {
+        e.preventDefault();
+        shortcutWarningCount++;
+        if (shortcutWarningCount >= 2) {
+          showToast('Multiple shortcut attempts — submitting.', 2100);
+          detectCheating();
+        } else {
+          showToast('Shortcut disabled during exam. Second attempt will submit.');
+        }
+      }
+    });
+
+    // Block refresh keys
+    window.addEventListener('keydown', function(e){
+      if ((e.ctrlKey && e.key === 'r') || e.key === 'F5') {
+        e.preventDefault();
+        showToast('Refresh blocked.');
+        detectCheating();
+      }
+    });
+
+    /* ======== Start & preview handlers ======== */
+    startBtn.onclick = () => {
+      activateFullscreen();
+      instructionsDiv.style.display = 'none';
+      examInterface.style.display = 'block';
+      loadQuestions();
+      startTimer();
+      showToast('Exam started — best of luck!');
+    };
+
+    practiceBtn.onclick = () => {
+      // For preview, fetch <some> questions but don't require fullscreen or timer
+      fetch(`/api/exams/${examId}/questions?token=${token}`)
+        .then(resp => resp.json())
+        .then(data => {
+          questions = data.questions || [];
+          renderQuestionNav();
+          showQuestion(0);
+          setCounts();
+          showToast('Preview loaded (no autosave).', 1500);
+        })
+        .catch(() => alert('Failed to load preview.'));
+    };
+
+    /* ======== Download & utility actions ======== */
+    downloadSummaryBtn.onclick = () => {
+      const blob = new Blob([JSON.stringify({ answers, marked: Array.from(markedForReview) }, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `exam-${examId}-answers.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast('Answers downloaded (JSON)');
+    };
+
+    reviewBtn.onclick = () => {
+      // Quick summary then open submit modal
+      showToast('Preparing review...', 900);
+      setTimeout(() => showSubmitModal(), 800);
+    };
+
+    showMarkedBtn.onclick = () => {
+      // Jump to first marked question if exists
+      const arr = Array.from(markedForReview);
+      if (arr.length > 0) showQuestion(arr[0]);
+      else showToast('No marked questions found.');
+    };
+
+    showAllBtn.onclick = () => {
+      if (questions.length) showQuestion(0);
+      else showToast('No questions loaded.');
+    };
+
+    /* ======== Initialize small helpers ======== */
+    // Populate counts before fetch
+    setCounts();
+
+    // Warn before closing tab during exam
+    window.addEventListener('beforeunload', function(e) {
+      if (examInterface.style.display !== 'none' && !isSubmitting) {
+        const msg = 'You are in an active exam. Closing will submit it.';
+        (e || window.event).returnValue = msg;
+        return msg;
+      }
+    });
+
+    // small keyboard nav
+    document.addEventListener('keydown', (e) => {
+      if (examInterface.style.display !== 'none') {
+        if (e.key === 'ArrowRight') nextBtn.click();
+        if (e.key === 'ArrowLeft') prevBtn.click();
+        if (e.key === 'm' || e.key === 'M') markBtn.click();
+      }
+    });
+  </script>
+
+</body>
+</html>

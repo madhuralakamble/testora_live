@@ -1,0 +1,2710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Teacher Dashboard - Testora</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+/* Animated background gradient waves for dashboard */
+body {
+  background: radial-gradient(circle at top left, #3b82f6, #9333ea, #111);
+  background-size: 300% 300%;
+  animation: bgWave 15s ease infinite;
+}
+@keyframes bgWave {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+.gradient-hover {
+      background-image: linear-gradient(90deg, rgb(90, 21, 146), #9333ea, #6a2abd);
+      background-size: 200% auto;
+      transition: background-position 0.5s, color 0.5s;
+    }
+.gradient-hover:hover {
+      background-position: right center;
+      color: white;
+    }
+
+header {
+      background: white;
+      box-shadow: 0 3px 12px rgba(184,16,250,0.473);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .header-container {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 14px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .logo img {
+      height: 75px;
+      width: auto;
+    }
+    .logo span {
+      font-family: 'Poppins', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #5f0494;
+    }
+    nav a {
+      font-weight: 600;
+      font-size: 1rem;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      width: 0%;
+      height: 2px;
+      background: #6c3dc7;
+      transition: 0.3s ease;
+      transform: translateX(-50%);
+    }
+    nav a:hover::after {
+      width: 60%;
+    }
+
+    /* Footer */
+    footer {
+      max-width: 960px;
+      margin: 100px auto 40px auto;
+      text-align: center;
+      color: #a39dc0;
+      font-size: 0.95rem;
+      position: relative;
+      z-index: 5;
+    }
+    .footer-social {
+      margin-top: 20px;
+      font-size: 2rem;
+    }
+    .footer-social a {
+      margin: 0 14px;
+      color: #6b3cc6;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+/* Sidebar styles */
+.dashboard-sidebar {
+  background: #181337;
+  color: #fff;
+  min-height: 100vh;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 0 16px #8316ea22;
+}
+.dashboard-sidebar nav a {
+  display: block;
+  font-weight: 600;
+  font-size: 1.08rem;
+  padding: 0.8rem 1.2rem;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+}
+.dashboard-sidebar nav a:hover, 
+.dashboard-sidebar nav .active {
+  background: linear-gradient(92deg, #6c3c96 0%, #7e49af 100%);
+  color: #fff !important;
+  transform: scale(1.05);
+}
+/* Avatar box */
+.sidebar-avatar-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.sidebar-avatar-box img {
+  width: 100px;
+  height: 100px;
+  border-radius: 9999px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 12px #9165ed66;
+}
+.sidebar-avatar-box .role {
+  color: #c6a5e7;
+  font-weight: 500;
+  font-size: 1.2rem;
+}
+
+/* Dashboard header */
+.dashboard-header {
+  background: white;
+  box-shadow: 0 3px 12px rgba(184, 16, 250, 0.23);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 16px 38px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dashboard-header .logo img {
+  height: 57px;
+  width: auto;
+  margin-right: 12px;
+}
+.dashboard-header .logo span {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #5f0494;
+}
+
+/* Main dashboard area */
+.dashboard-main {
+  padding: 2.5rem;
+  margin: 50px auto 50px auto;  /* Top margin 100px pushes content below header */
+  background: white;
+  box-shadow: 0 8px 42px #b173f04f;
+  border-radius: 2.2rem;
+  max-width: 1500px;
+  min-height: 65vh;
+  position: relative;
+  z-index: 10;
+}
+
+.dashboard-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 2.6rem;
+  color: #111;
+  letter-spacing: 0.10rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+.dashboard-card-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 2.2rem;
+  margin-bottom: 2.6rem;
+  justify-content: center;
+}
+.dashboard-card {
+  border-radius: 1.4rem;
+  box-shadow: 0 4px 16px #8b5cf64a;
+  padding: 2rem 1.5rem;
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+.dashboard-card:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 15px 35px rgba(99, 51, 255, 0.55);
+}
+.card-blue {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+} /* Strong royal blue to navy */
+
+.card-purple {
+  background: linear-gradient(135deg, #d946ef 0%, #a21caf 100%);
+} /* Bright magenta pink to deep purple */
+
+.card-green {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+} /* Fresh green shades */
+
+.card-pinkred {
+  background: linear-gradient(135deg, #f43f5e 0%, #ec4899 100%);
+} /* Reddish-pink gradient */
+
+.card-yellowish{
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+} /* yellowish gradient */
+
+.dashboard-card .icon {font-size: 1.45rem; margin-bottom: .4rem;}
+.dashboard-card .label {font-size: 1.11rem; margin-bottom: 0.6rem;}
+.dashboard-card .value {font-size: 2.6rem; font-weight: 800;}
+
+/* Sidebar navigation links hover animation */
+.dashboard-sidebar nav a {
+  transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.3s ease;
+}
+.dashboard-sidebar nav a:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(99, 51, 255, 0.7);
+  background: linear-gradient(92deg, #6c3c96 0%, #7e49af 100%);
+  color: #fff !important;
+  z-index: 1;
+}
+
+/* Logout button hover animation */
+header button {
+  background: linear-gradient(90deg, #6c3c96, #a97fff);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  transition: background-position 0.4s ease, transform 0.25s ease, box-shadow 0.4s ease;
+  background-size: 200% auto;
+  box-shadow: 0 6px 12px rgba(147, 104, 233, 0.6);
+}
+
+header button:hover {
+  background-position: right center;
+  transform: scale(1.08);
+  box-shadow: 0 10px 20px rgba(166, 120, 222, 0.9);
+  background: linear-gradient(90deg, #7e49af, #6c3c96);
+}
+
+/* Smooth active sidebar link scale */
+.dashboard-sidebar nav a.active {
+  transform: scale(1.07);
+  box-shadow: 0 10px 22px rgba(99, 51, 255, 0.75);
+  background: linear-gradient(92deg, #7e49af 0%, #6c3c96 100%);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .dashboard-main {
+    padding: 1.3rem;
+    max-width: 98vw;
+  }
+  .dashboard-title {
+    font-size: 2rem;
+  }
+  .dashboard-card-row {
+    gap: 1.3rem;
+  }
+}
+@media (max-width: 650px) {
+  .dashboard-main {
+    padding: .7rem;
+    border-radius: 18px;
+  }
+  .dashboard-title {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+}
+  @keyframes wave {
+      from { background-position-x: 0; }
+      to { background-position-x: 1000px; }
+    }
+    @keyframes shimmer {
+      to { background-position: 200% center; }
+    }
+@keyframes floatSlow {
+  0%   { transform: translateY(0) scale(1); opacity: 0.18; }
+  50%  { transform: translateY(-80px) scale(1.13); opacity: 0.32;}
+  100% { transform: translateY(0) scale(1); opacity: 0.18;}
+}
+@keyframes floatSlower {
+  0%   { transform: translateY(0) scale(1); opacity: 0.13; }
+  50%  { transform: translateY(-110px) scale(1.19); opacity: 0.35;}
+  100% { transform: translateY(0) scale(1); opacity: 0.13;}
+}
+@keyframes floatSlowest {
+  0%   { transform: translateY(0) scale(1); opacity: 0.13; }
+  50%  { transform: translateY(-180px) scale(1.28); opacity: 0.39;}
+  100% { transform: translateY(0) scale(1); opacity: 0.13;}
+}
+.float-slow    { animation: floatSlow 9s ease-in-out infinite; }
+.float-slower  { animation: floatSlower 13s ease-in-out infinite;}
+.float-slowest { animation: floatSlowest 18s ease-in-out infinite;}
+
+
+#profile-view {
+  max-width: 1400px;
+  padding: 40px 50px;
+  font-size: x-large;
+}
+
+#profile-view > div:nth-child(2) {
+  padding-left: 40px;
+}
+
+  </style>
+  <style>
+  /* Status badge styles */
+  .badge {
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    display: inline-block;
+  }
+  .badge-upcoming {
+    background-color: #d0eaff;
+    color: #0270e3;
+  }
+  .badge-ongoing {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  .badge-completed {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  .badge-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
+  /* Button styles */
+  .btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    color: white;
+    margin-right: 8px;
+    transition: background-color 0.3s ease;
+    font-size: 14px;
+  }
+  .btn-create {
+    background-color: #6c38ff; /* purple */
+  }
+  .btn-create:hover {
+    background-color: #4b1cb9;
+  }
+  .btn-import {
+    background-color: #28a745; /* green */
+  }
+  .btn-import:hover {
+    background-color: #1e7e34;
+  }
+  .btn-export {
+    background-color: #3b59f5; /* blue */
+  }
+  .btn-export:hover {
+    background-color: #2b40aa;
+  }
+  .btn-action {
+    background-color: transparent;
+    border: none;
+    color: #0056b3;
+    font-weight: 600;
+    cursor: pointer;
+    margin-right: 6px;
+  }
+  .btn-action:hover {
+    color: #003d80;
+  }
+
+  /* Search and dropdown filter bar */
+  #filterBar {
+    margin-bottom: 10px;
+  }
+  #filterBar input,
+  #filterBar select {
+    padding: 6px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 8px;
+    font-size: 14px;
+  }
+  #filterBar input[type="text"] {
+    width: 220px;
+  }
+  #filterBar select {
+    width: 150px;
+  }
+
+  /* Fade in animation */
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(-20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* Optional: smooth fade out */
+@keyframes fadeOut {
+  from {opacity: 1; transform: translateY(0);}
+  to {opacity: 0; transform: translateY(-20px);}
+}
+
+.animate-fadeOut {
+  animation: fadeOut 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(-20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+.animate-fadeIn { animation: fadeIn 0.3s ease forwards; }
+
+@media (max-width: 600px) {
+  #gradingModal .bg-white {
+    width: 98vw !important;
+    min-width: 0 !important;
+    padding: 1rem !important;
+  }
+}
+
+</style>
+
+
+
+</head>
+<body>
+  <!-- Floating Circles Background -->
+  <div class="fixed rounded-full bg-white float-slow opacity-10" style="width:90px;height:90px;top:9vh;left:10vw;"></div>
+  <div class="fixed rounded-full bg-white float-slower opacity-10" style="width:120px;height:120px;top:4vh;left:82vw;"></div>
+  <div class="fixed rounded-full bg-white float-slowest opacity-10" style="width:200px;height:200px;top:66vh;left:68vw;"></div>
+  <div class="fixed rounded-full bg-purple-200 float-slower opacity-10" style="width:110px;height:110px;top:80vh;left:25vw;"></div>
+  <div class="fixed rounded-full bg-white float-slowest opacity-10" style="width:200px;height:200px;top:60vh;left:95vw;"></div>
+  <div class="fixed rounded-full bg-white float-slow opacity-10" style="width:100px;height:100px;top:19vh;left:40vw;"></div>
+  <!-- Navbar -->
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Testora Logo"
+          class="mx-auto rounded-full shadow-lg" />
+        <span>Testora</span>
+      </div>
+      <a href="{{ url_for('logout') }}">
+      <button class="bg-red-600 text-white px-5 py-2 rounded hover:bg-red-700 transition">Logout</button>
+      </a>
+    </header>
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar w-64 flex-shrink-0">
+      <div class="sidebar-avatar-box">
+        <img src="{{ user.teacher_url }}" alt="Teacher Avatar" />
+        <div class="font-bold text-lg">{{ user.username }}</div>
+        <div class="role">{{ user.role|capitalize }}</div>
+      </div>
+      <nav>
+          <a href="#" class="active" onclick="switchTab('dashboard', event)">Dashboard</a>
+          <a href="#" onclick="switchTab('exams', event)">Exam Section</a>
+          <a href="#" onclick="switchTab('students', event)">Student Section</a>
+          <a href="#" onclick="switchTab('results', event)">Results</a>
+          <a href="#" onclick="switchTab('edit-profile', event)">Edit Profile</a>
+</nav>
+    </aside>
+    <!-- Main Dashboard Area -->
+    <main class="dashboard-main flex-1">
+       <div id="dashboard" class="tab-content" style="display: block;">
+      <h1 class="dashboard-title">Teacher Dashboard</h1>
+     
+<div class="dashboard-card-row">
+  <!-- My Exams -->
+  <div class="dashboard-card card-purple">
+    <span class="icon">📝</span>
+    <div class="label">My Exams</div><br>
+    <div class="value" id="examCount">--</div>
+  </div>
+  <!-- Active Students -->
+  <div class="dashboard-card card-green">
+    <span class="icon">👨‍🎓</span>
+    <div class="label">Students Monitored</div>
+    <div class="value" id="activeStudentCount">--</div>
+  </div>
+  <!-- Pending Grading -->
+  <div class="dashboard-card card-yellowish">
+    <span class="icon">⏳</span>
+    <div class="label">Pending Grading</div><br>
+    <div class="value" id="pendingGradingCount">--</div>
+  </div>
+  <!-- Completed Exams -->
+  <div class="dashboard-card card-blue">
+    <span class="icon">✅</span>
+    <div class="label">Exams Completed</div><br>
+    <div class="value" id="completedExamCount">--</div>
+  </div>
+</div>
+</div>
+
+
+      <!--  exam management interface here -->
+
+      <div id="exams" class="tab-content" style="display: none;">
+    
+    
+    <div style="display: block;">
+  <div class="items-center mb-8">
+    <h1 class="dashboard-title">Exam Section</h1>
+<div class="flex flex-wrap gap-4 mb-4">
+  <input type="text" id="searchExam" placeholder="Search exams..." class="border rounded p-2 flex-grow" onkeyup="filterExams()" />
+  <input type="text" id="filterSubject" placeholder="Filter by Subject" class="border rounded p-2" onkeyup="filterExams()" />
+
+</div>
+     <div class="flex gap-4 mb-6">
+    <button class="bg-purple-700 text-white px-5 py-2 rounded font-bold hover:bg-purple-800 transition" onclick="showExamModal()">+ Create Exam</button>
+    <button class="bg-indigo-600 text-white px-4 py-2 rounded font-bold hover:bg-indigo-700" onclick="showExportModal()">Export Questions</button>
+  </div>
+  </div>
+
+  <!-- Exam Table -->
+  <div class="overflow-x-auto rounded shadow">
+  <table class="min-w-full bg-white rounded-lg overflow-hidden border border-gray-300">
+  <thead class="bg-purple-700 text-white border-b border-purple-900">
+  <tr>
+    <th class="py-3 px-4 border">Exam Title</th>
+    <th class="py-3 px-4 border">Subject</th>
+    <th class="py-3 px-4 border">Exam Date</th>
+    <th class="py-3 px-4 border">Duration</th>
+    <th class="py-3 px-4 border">Status</th>
+    <th class="py-3 px-4 border">Actions</th>
+  </tr>
+</thead>
+
+  <tbody id="examTable">
+         <!-- Dynamically render exams here -->
+        
+      </tbody>
+    </table>
+  </div>
+
+  
+ 
+
+  <!-- Modal for Create/Edit Exam -->
+  <div id="examModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+    <div class="bg-white p-8 rounded-lg max-w-md w-full">
+      <h2 class="text-xl font-bold mb-4" id="examModalTitle">Create Exam</h2>
+      <form id="examForm">
+        <div class="mb-4">
+          <label class="block font-semibold mb-1">Exam Title</label>
+          <input type="text" name="title" required class="w-full p-2 border rounded">
+        </div>
+        <div class="mb-4">
+          <label class="block font-semibold mb-1">Subject</label>
+          <input type="text" name="subject" required class="w-full p-2 border rounded">
+        </div>
+        <div class="mb-4">
+          
+          <label class="block font-semibold mb-1">Exam Date</label>
+          <input type="date" name="date" required class="w-full p-2 border rounded">
+        </div>
+        
+        <div class="mb-4">
+          <label class="block font-semibold mb-1">Duration (minutes)</label>
+          <input type="number" min="1" name="duration" required class="w-full p-2 border rounded">
+        </div>
+        <div class="mb-4">
+          <label class="block font-semibold mb-1">Description/Instructions</label>
+          <textarea name="description" class="w-full p-2 border rounded"></textarea>
+        </div>
+        <div class="flex justify-end mt-4 gap-4">
+          <button type="button" class="bg-gray-400 px-5 py-2 rounded text-white font-bold" onclick="hideExamModal()">Cancel</button>
+          <button type="submit" class="bg-purple-700 px-5 py-2 rounded text-white font-bold">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+
+
+  <!-- Questions Modal -->
+  <div id="questionsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-lg w-3/4 max-h-[80vh] overflow-y-auto p-6">
+    <h3 class="text-xl font-semibold mb-4">Questions for Exam: <span id="currentExamTitle"></span></h3>
+    <button onclick="showAddQuestionForm()" class="bg-blue-600 text-white px-4 py-2 rounded mb-4">Add Question</button>
+    <input type="file" id="csvInput" accept=".csv" style="display:none" />
+    <button onclick="openImportCsvModal()" class="bg-green-600 text-white px-4 py-2 rounded mb-4 ml-2">Import CSV</button>
+    <div id="questionFormContainer" class="mb-6 hidden">
+      <form id="questionForm" onsubmit="submitQuestion(event)" class="space-y-4">
+        <div>
+          <label class="font-semibold">Question Text:</label><br />
+          <textarea id="questionText" required class="w-full p-2 border rounded"></textarea>
+        </div>
+        <div>
+          <label class="font-semibold">Question Type:</label>
+          <select id="questionType" onchange="toggleOptionsInput()" class="p-2 border rounded">
+            <option value="objective">Objective</option>
+            <option value="subjective">Subjective</option>
+          </select>
+        </div>
+        <div id="optionsSection" class="hidden">
+          <label>Options:</label>
+    <div id="optionsContainer"></div>
+    <button type="button" onclick="addOptionInput()" class="mt-2 bg-blue-500 text-white px-2 py-1 rounded">Add Option</button>
+         <br> <label class="mt-4">Correct Option:</label>
+    <select id="correctAnswer" class="border p-2 rounded w-full"></select>
+  </div>
+   <div class="mt-4">
+    <label>Marks (default 1):</label>
+    <input type="number" id="marks" min="1" value="1" class="border p-2 rounded w-full" />
+  </div>
+        <div class="flex justify-end gap-4">
+          <button type="button" onclick="cancelAddQuestion()" class="bg-gray-400 text-white px-4 py-2 rounded">Cancel</button>
+          <button type="submit" class="bg-purple-700 text-white px-4 py-2 rounded">Save</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="questionsList" class="max-h-60 overflow-auto border rounded p-4">
+      <!-- List of questions appears here -->
+    </div>
+
+    <button onclick="closeQuestionsModal()" class="bg-red-600 text-white px-4 py-2 rounded mt-4">Close</button>
+  </div>
+</div>
+
+  <!-- Import CSV Instructions Modal -->
+<div id="importCsvModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-lg p-6 max-w-lg w-full shadow-lg">
+    <h2 class="text-2xl font-bold mb-3 text-purple-700">Prepare your CSV file</h2>
+    <ul class="mb-4 list-disc list-inside text-gray-700 text-base space-y-1">
+      <li>The <span class="font-semibold text-purple-700">first row</span> must have these headers:</li>
+    </ul>
+    <div class="bg-gray-100 rounded px-3 py-2 mb-4 font-mono text-sm overflow-x-auto border border-gray-200">
+      question_text,question_type,options,correct_answer,marks,difficulty
+    </div>
+    <ul class="mb-4 list-disc list-inside text-gray-700 text-base space-y-1">
+      <li>For <span class="font-semibold text-teal-700">objective</span> questions, use <span class="font-semibold text-pink-700">semicolons ;</span> between options (e.g. <span class="italic">Option1;Option2;Option3</span>).</li>
+      <li>Leave the <span class="font-semibold">options</span> field blank for subjective questions.</li>
+      <li><span class="font-semibold">Example rows:</span></li>
+    </ul>
+    <div class="bg-gray-50 px-3 py-2 rounded font-mono text-sm mb-4 border border-gray-200">
+      "What is 2+2?",objective,"2;3;4;5",4,1,Easy<br>
+      "Who wrote Hamlet?",subjective,,Shakespeare,2,Medium
+    </div>
+    <label class="block mb-2 mt-4 font-semibold text-gray-800" for="csvFileInput">Select your .csv file:</label>
+    <input type="file" id="csvFileInput" accept=".csv" class="mb-6 border p-2 w-full rounded cursor-pointer file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-sm file:bg-purple-50 file:text-purple-700" />
+    <div class="flex justify-end gap-4">
+      <button id="closeImportCsvModal" class="px-4 py-2 rounded bg-gray-400 hover:bg-gray-500 text-white">Cancel</button>
+      <button id="startImportCsv" class="px-4 py-2 rounded bg-green-600 hover:bg-green-700 text-white font-semibold shadow">Import</button>
+    </div>
+  </div>
+</div>
+
+<!-- Export Questions Modal -->
+<div id="exportModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+  <div class="bg-white p-6 rounded-lg max-w-md w-full">
+    <h2 class="text-xl font-bold mb-3">Export Questions</h2>
+    <form id="exportForm">
+      <label><input type="checkbox" id="selectAllExams"> Select All Exams</label>
+      <div id="examsList" class="my-4 flex flex-col gap-2"></div>
+      <div class="flex justify-end gap-3 mt-6">
+        <button type="button" onclick="closeExportModal()" class="bg-gray-400 px-4 py-2 text-white rounded">Cancel</button>
+        <button type="submit" class="bg-indigo-600 px-4 py-2 text-white rounded">Export</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div id="assignModalBackdrop" class="fixed inset-0 bg-black opacity-50 z-40 hidden"></div>
+
+<!-- Assign Students Modal -->
+<div id="assignStudentsModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
+    <h2 class="font-bold text-lg mb-4">Assign Students to Exam</h2>
+    <label class="block mb-2"><input type="checkbox" id="selectAllStudents" /> Select All</label>
+    <div class="overflow-y-auto max-h-64">
+      <table class="w-full border rounded" id="assignStudentsTable">
+        <thead>
+          <tr class="bg-gray-100">
+            <th></th>
+            <th>Name</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS will fill this with student rows -->
+        </tbody>
+      </table>
+    </div>
+    <div class="flex gap-2 justify-end mt-4">
+      <button id="saveAssignBtn" class="bg-purple-600 text-white px-4 py-2 rounded">Save Assignments</button>
+      <button onclick="closeAssignModal()" class="bg-gray-300 text-black px-4 py-2 rounded">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+  <!-- Live Participation Modal -->
+  <div id="monitorModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-lg max-w-4xl w-full max-h-[80vh] overflow-auto p-6">
+    <h3 class="text-xl font-semibold mb-4">Live Participation</h3>
+    <table class="min-w-full border border-gray-300">
+      <thead>
+        <tr class="bg-purple-700 text-white">
+          <th class="border px-4 py-2">Student</th>
+          <th class="border px-4 py-2">Status</th>
+          <th class="border px-4 py-2">Start Time</th>
+          <th class="border px-4 py-2">Cheating Detected </th> 
+          <th class="border px-4 py-2">Score</th>
+        </tr>
+      </thead>
+      <tbody id="monitorTableBody" class="text-center"></tbody>
+    </table>
+    <button onclick="closeMonitorModal()" class="bg-red-600 text-white px-4 py-2 rounded mt-4">Close</button>
+  </div>
+</div>
+
+</body>
+
+<!-- Student Section -->
+<div id="students" class="tab-content" style="display: none;">
+  <h1 class="dashboard-title">Student Section</h1>
+
+  <!-- Filters -->
+  <div class="mb-4 flex gap-4">
+    <input type="text" id="searchStudentInput" placeholder="Search by name or email" class="border rounded p-2 flex-grow" />
+    <select id="statusFilter" class="border rounded p-2">
+      <option value="">All Status</option>
+      <option value="Active">Active</option>
+      <option value="Inactive">Inactive</option>
+    </select>
+  </div>
+
+  <!-- Students Table -->
+  <table id="studentsTable" class="w-full border-collapse border border-gray-300">
+    <thead>
+      <tr class="bg-gray-200">
+        <th class="border p-2">Name</th>
+        <th class="border p-2">Email</th>
+        <th class="border p-2">Username</th>
+        <th class="border p-2">Status</th>
+        <th class="border p-2">Assignments</th>
+        <th class="border p-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+
+<!--delete assignment from students-->
+<div id="deleteAssignmentsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white rounded-lg shadow-lg max-w-lg w-full p-6">
+    <h3 class="text-lg font-semibold mb-4">Delete Student's Exam Assignments</h3>
+    <table class="w-full text-left border border-gray-300 mb-4">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="p-2 border border-gray-300">
+            <input type="checkbox" id="selectAllDeleteAssignments">
+          </th>
+          <th class="p-2 border border-gray-300">Title</th>
+          <th class="p-2 border border-gray-300">Subject</th>
+          <th class="p-2 border border-gray-300">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Assignment rows go here -->
+      </tbody>
+    </table>
+    <div class="flex justify-end space-x-4">
+      <button id="deleteAssignmentsSaveBtn" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Save</button>
+      <button onclick="document.getElementById('deleteAssignmentsModal').classList.add('hidden')" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+
+  <div id="results" class="tab-content" style="display: none;">
+ <h1 class="dashboard-title mb-6">Results</h1>
+
+<div class="mb-4 flex items-center gap-4">
+  <label for="examSelect" class="font-semibold">Select Exam:</label>
+  <select id="examSelect" class="border border-gray-300 rounded px-3 py-2 w-80" onchange="handleExamChange()">
+    <option value="">-- Select an exam --</option>
+    <!-- Dynamically filled exam options -->
+  </select>
+</div>
+
+<input type="text" id="searchStudentResult" placeholder="Search..." class="border border-gray-300 rounded px-3 py-2 w-96 mb-4">
+
+<button onclick="exportResults()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition mb-6">Export Results to Excel</button>
+<button id="openResultSummaryBtn" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition mb-6">View Result Summary</button>
+<button id="openAnalyticsBtn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition mb-6 ml-4">View Analytics</button>
+
+
+<table id="resultsTable" class="min-w-full bg-white rounded border border-gray-300 shadow">
+  <thead>
+    <tr class="bg-purple-700 text-white">
+      <th class="p-3 border border-purple-900">Student Name</th>
+      <th class="p-3 border border-purple-900">Status</th>
+      <th class="p-3 border border-purple-900">Score</th>
+      <th class="p-3 border border-purple-900">Cheating</th>
+      <th class="p-3 border border-purple-900">Actions</th>
+    </tr>
+  </thead>
+  <tbody id="resultsBody" class="text-center">
+    <tr><td colspan="5" class="py-6 text-gray-500 font-semibold">Select an exam to load results</td></tr>
+  </tbody>
+</table>
+
+
+<!-- Result Summary Modal -->
+<div id="resultSummaryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-lg w-96 p-6 shadow-lg relative animate-fadeIn">
+    <h3 class="text-2xl font-bold mb-4">Exam Result Summary</h3>
+    <div id="resultSummaryContent" class="space-y-3 text-gray-700">
+      <p><strong>Average Score:</strong> <span id="avgScore">Loading...</span></p>
+      <p><strong>Highest Score:</strong> <span id="highScore">Loading...</span></p>
+      <p><strong>Lowest Score:</strong> <span id="lowScore">Loading...</span></p>
+      <p><strong>Total Students:</strong> <span id="totalStudents">Loading...</span></p>
+    </div>
+    <button id="closeResultSummaryBtn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl font-bold">&times;</button>
+  </div>
+</div>
+
+
+<!-- Analytics Modal -->
+<div id="analyticsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-lg p-6 w-96 shadow-lg relative animate-fadeIn">
+    <h3 class="text-2xl font-bold mb-4">Results Analytics</h3>
+    <canvas id="analyticsChart" width="350" height="250"></canvas>
+    <button id="closeAnalyticsBtn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl font-bold">&times;</button>
+  </div>
+</div>
+
+
+
+<!-- Manual Grading Modal -->
+
+<div id="gradingModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-lg w-[90vw] max-w-2xl p-6 shadow-lg relative animate-fadeIn"
+       style="max-height: 90vh; overflow-y: auto;">
+    <h3 class="text-2xl font-bold mb-4">Manual Grading</h3>
+    <div id="gradingContent" class="overflow-y-auto max-h-[55vh]"></div>
+    <div class="flex gap-4 mt-6">
+      <button id="saveGradesBtn" class="bg-purple-700 text-white px-5 py-2 rounded hover:bg-purple-900 transition">Save Grades</button>
+      <button id="sendEmailBtn" class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-800 transition">Send Result Email</button>
+      <button id="closeGradingBtn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl font-bold">&times;</button>
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+
+ 
+
+
+
+<div id="edit-profile" class="tab-content" style="display: none; max-width: 1100px; margin: 10px auto; background: white; padding: 20px; border-radius: 10px; color: black;">
+  <h1 class="dashboard-title">Edit Profile</h1>
+
+  <!-- Profile view mode with box -->
+  <div id="profile-view" 
+    style="
+      max-width: 1100px; 
+      width: 100%;
+      margin-left: 0;
+      display: flex; 
+      gap: 40px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background: white;
+      box-sizing: border-box; /* important for padding */
+    ">
+    <div style="flex-shrink: 0; display: flex; flex-direction: column; align-items: center;">
+      <img id="view-profile-picture" src="/static/teacher icon.jpg" alt="Profile Picture"
+        style="width: 175px; height: 175px; border-radius: 50%; object-fit: cover; border: 4px solid #a78bfa; margin-bottom: 24px;">
+    </div>
+
+    <div style="flex-grow: 1; padding-left: 10px;">
+      <div style="margin-bottom: 32px;">
+        <div style="font-size: 2rem; font-weight: 800; letter-spacing: 1px; color: #561c8b;">Full Name: <span id="view_full_name"></span></div>
+        <div style="font-size: 1.5rem; font-weight: 600; color: #444; margin-top: 14px;">Username: <span id="view_username"></span></div>
+      </div>
+
+      <div style="font-size: 1.4rem; line-height: 2.4; color: #222; letter-spacing: .05em;">
+        <div><b>Email:</b> <span id="view_email"></span></div>
+        <div><b>Alternate Email:</b> <span id="view_alt_email"></span></div>
+        <div><b>Phone:</b> <span id="view_phone"></span></div>
+        <div><b>Date of Birth:</b> <span id="view_dob"></span></div>
+        <div><b>Gender:</b> <span id="view_gender"></span></div>
+        <div><b>Street:</b> <span id="view_street"></span></div>
+        <div><b>City:</b> <span id="view_city"></span></div>
+        <div><b>State:</b> <span id="view_state"></span></div>
+        <div><b>Zip:</b> <span id="view_zip"></span></div>
+        <div><b>Country:</b> <span id="view_country"></span></div>
+        <div><b>Department:</b> <span id="view_department_teacher"></span></div>
+        <div><b>Courses Handling:</b> <span id="view_courses_handling"></span></div>
+        <div><b>Designation:</b> <span id="view_designation"></span></div>
+        <div><b>Experience:</b> <span id="view_experience"></span></div>
+        <div><b>Qualifications:</b> <span id="view_qualifications"></span></div>
+      </div>
+
+      <div style="margin-top: 36px; text-align: left;">
+        <button id="editBtn" style="font-size: 1.5rem; padding: 16px 44px; background-color: #6a2abd; color: white; border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 3px 14px #a78bfa55;">Edit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile edit mode -->
+  <form id="profile-edit" style="display: none; max-width: 700px; margin: 20px auto 0; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background: white;" enctype="multipart/form-data" >
+    <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 20px; color: #561c8b;">Edit Profile</h2>
+
+    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+      <img id="edit-profile-picture-preview" src="/static/teacher icon.jpg" alt="Profile Picture Preview"
+        style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid #6a2abd;">
+      <input type="file" id="edit-profile-picture" name="profile_picture" accept="image/*"
+        style="padding: 6px; border-radius: 5px; border: 1px solid #ccc;"/>
+    </div>
+    <div id="image_error" style="color: red; font-weight: 600; margin-top: 5px;"></div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_username" style="font-weight: 600; display: block; margin-bottom: 6px;">Username (Readonly):</label>
+      <input type="text" id="edit_username" name="username" readonly
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; background: #f0f0f0;"/>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_full_name" style="font-weight: 600; display: block; margin-bottom: 6px;">Full Name:</label>
+      <input type="text" id="edit_full_name" name="full_name" required
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_dob" style="font-weight: 600; display: block; margin-bottom: 6px;">Date of Birth:</label>
+      <input type="date" id="edit_dob" name="dob" required
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_gender" style="font-weight: 600; display: block; margin-bottom: 6px;">Gender:</label>
+      <select id="edit_gender" name="gender" required
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+        <option value="" disabled>Select Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_email" style="font-weight: 600; display: block; margin-bottom: 6px;">Email (Readonly):</label>
+      <input type="email" id="edit_email" name="email" readonly
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; background: #f0f0f0;"/>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_alt_email" style="font-weight: 600; display: block; margin-bottom: 6px;">Alternate Email:</label>
+      <input type="email" id="edit_alt_email" name="alt_email"
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_phone" style="font-weight: 600; display: block; margin-bottom: 6px;">Phone:</label>
+      <input type="text" id="edit_phone" name="phone"
+        pattern="^\d{10}$" maxlength="10" minlength="10"
+        title="Phone number must be exactly 10 digits"
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required/>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_street" style="font-weight: 600; display: block; margin-bottom: 6px;">Street:</label>
+      <input type="text" id="edit_street" name="street"
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required/>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_city" style="font-weight: 600; display: block; margin-bottom: 6px;">City:</label>
+      <input type="text" id="edit_city" name="city"
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required/>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_state" style="font-weight: 600; display: block; margin-bottom: 6px;">State:</label>
+      <input type="text" id="edit_state" name="state"
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required/>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_zip" style="font-weight: 600; display: block; margin-bottom: 6px;">Zip:</label>
+      <input type="text" id="edit_zip" name="zip"
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;" required/>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_country" style="font-weight: 600; display: block; margin-bottom: 6px;">Country:</label>
+      <select id="edit_country" name="country" required
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+        <option value="" disabled selected>Select your country</option>
+        <option value="usa">United States</option>
+        <option value="canada">Canada</option>
+        <option value="uk">United Kingdom</option>
+        <option value="india">India</option>
+        
+      </select>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_department_teacher" style="font-weight: 600; display: block; margin-bottom: 6px;">Department:</label>
+      <input type="text" id="edit_department_teacher" name="department_teacher"
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_courses_handling" style="font-weight: 600; display: block; margin-bottom: 6px;">Courses Handling:</label>
+      <input type="text" id="edit_courses_handling" name="courses_handling"
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_designation" style="font-weight: 600; display: block; margin-bottom: 6px;">Designation:</label>
+      <input type="text" id="edit_designation" name="designation"
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_experience" style="font-weight: 600; display: block; margin-bottom: 6px;">Experience:</label>
+      <input type="number" id="edit_experience" name="experience"
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <label for="edit_qualifications" style="font-weight: 600; display: block; margin-bottom: 6px;">Qualifications:</label>
+      <input type="text" id="edit_qualifications" name="qualifications"
+        style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
+    </div>
+
+    <div style="margin-top: 15px;">
+      <button type="submit"
+        style="background-color: #16a34a; color: white; padding: 12px 24px; border:none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1rem;">Save</button>
+      <button type="button" id="cancelBtn"
+        style="margin-left: 12px; background-color: #9ca3af; color: white; padding: 12px 24px; border:none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 1rem;">Cancel</button>
+    </div>
+
+    <div id="message" style="margin-top: 15px; color: red; font-weight: bold;"></div>
+  </form>
+  <span id="message"></span>
+</div>
+
+
+      <div class="bg-gray-200 rounded-md py-3 px-6 mt-16 text-center font-semibold text-xl text-gray-700 shadow">
+        Online Examination System
+      </div>
+    </main>
+  </div>
+  <!-- Footer -->
+  <footer class="py-8 px-8 text-center bg-black/30 backdrop-blur-md">
+    <p class="mb-4">© 2025 Testora. All rights reserved.</p>
+    <div class="flex justify-center space-x-8 mt-4">
+      <a href="https://facebook.com" target="_blank" class="hover:text-blue-500 transition" aria-label="Facebook">
+        <!-- Facebook SVG -->
+        <svg fill="currentColor" viewBox="0 0 24 24" class="w-7 h-7"><path d="M22 12.07C22 6.49 17.52 2 12 2S2 6.49 2 12.07c0 5.02 3.66 9.18 8.44 9.93v-7.03H7.89v-2.9h2.55v-2.21c0-2.52 1.5-3.9 3.8-3.9 1.1 0 2.25.2 2.25.2v2.46h-1.27c-1.25 0-1.67.78-1.67 1.57v1.87h2.83l-.45 2.9h-2.38v7.03C18.34 21.25 22 17.09 22 12.07z"/></svg>
+      </a>
+      <a href="https://instagram.com" target="_blank" class="hover:text-pink-500 transition" aria-label="Instagram">
+        <!-- Instagram SVG -->
+        <svg fill="currentColor" viewBox="0 0 24 24" class="w-7 h-7"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm4.25 2.7a5.05 5.05 0 1 1 0 10.1 5.05 5.05 0 0 1 0-10.1zm0 1.5a3.55 3.55 0 1 0 0 7.1 3.55 3.55 0 0 0 0-7.1zm5.1.6a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+      </a>
+      <a href="https://linkedin.com" target="_blank" class="hover:text-blue-700 transition" aria-label="LinkedIn">
+        <!-- LinkedIn SVG -->
+        <svg fill="currentColor" viewBox="0 0 24 24" class="w-7 h-7"><path d="M19 0h-14a5 5 0 0 0-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11.07 20h-2.87V9h2.87v11zm-1.43-12.26c-.92 0-1.66-.75-1.66-1.66 0-.92.75-1.66 1.66-1.66.92 0 1.66.75 1.66 1.66 0 .91-.75 1.66-1.66 1.66zm14.57 12.26h-2.87v-5.5c0-1.31-.02-3-1.87-3-1.87 0-2.16 1.46-2.16 2.89v5.61h-2.87V9h2.76v1.5h.04c.39-.75 1.39-1.55 2.88-1.55 3.08 0 3.65 2.03 3.65 4.67v6.38z"/></svg>
+      </a>
+    </div>
+  </footer>
+</body>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+window.switchTab = function(tabId, evt) {
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(tc => tc.style.display = 'none');
+    const links = document.querySelectorAll('.dashboard-sidebar nav a');
+    links.forEach(link => link.classList.remove('active'));
+    const selectedTab = document.getElementById(tabId);
+    if (selectedTab) selectedTab.style.display = 'block';
+
+    // Tab-specific loading logic
+    if (tabId === 'students' && typeof loadStudents === 'function') {
+        loadStudents();
+    }
+    if (tabId === 'edit-profile' && typeof fetchAndDisplayProfile === 'function') {
+        fetchAndDisplayProfile();
+        
+    }
+
+    evt.currentTarget.classList.add('active');
+};
+
+  window.filterExams = function() {
+    const searchTerm = document.getElementById('searchExam').value.trim().toLowerCase();
+    const subjectFilter = document.getElementById('filterSubject').value.trim().toLowerCase();
+    const rows = document.querySelectorAll('#examTable tr');
+    rows.forEach(row => {
+      const title = row.cells[0].innerText.trim().toLowerCase();
+      const subject = row.cells[1].innerText.trim().toLowerCase();
+      const matchesSearch = searchTerm === '' || title.includes(searchTerm);
+      const matchesSubject = subjectFilter === '' || subject.includes(subjectFilter);
+      if (matchesSearch && matchesSubject) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  };
+
+  window.showExamModal = function() {
+    document.getElementById('examModal').classList.remove('hidden');
+    document.getElementById('examForm').reset();
+    document.getElementById('examModalTitle').innerText = 'Create Exam';
+  };
+
+  window.hideExamModal = function() {
+    document.getElementById('examModal').classList.add('hidden');
+  };
+
+  window.importQuestions = function() {
+    alert('Import Questions functionality to be implemented.');
+  };
+
+
+  document.getElementById('examForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const examId = form.dataset.editingExamId;
+    const dataToSend = {
+      title: form.title.value,
+      subject: form.subject.value,
+      date: form.date.value,
+      duration: parseInt(form.duration.value, 10),
+      description: form.description.value,
+    };
+    try {
+      let url = '/api/exams';
+      let method = 'POST';
+      if (examId) {
+        url += `/${examId}`;
+        method = 'PUT';
+      }
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataToSend),
+      });
+      if (!response.ok) throw new Error('Failed to save exam.');
+      alert(examId ? 'Exam updated successfully.' : 'Exam created successfully.');
+      form.reset();
+      delete form.dataset.editingExamId;
+      document.getElementById('examModal').classList.add('hidden');
+      loadExams();
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+
+  window.deleteExam = async function(id) {
+    if (!confirm('Are you sure you want to delete this exam?')) return;
+    try {
+      const res = await fetch(`/api/exams/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete exam.');
+      alert('Exam deleted.');
+      loadExams();
+    } catch (err) {
+      alert('Error deleting exam.');
+    }
+  };
+
+  window.editExam = async function(examId) {
+    try {
+      const res = await fetch(`/api/exams/${examId}`);
+      if (!res.ok) throw new Error('Failed to fetch exam details.');
+      const exam = await res.json();
+      const modal = document.getElementById('examModal');
+      modal.classList.remove('hidden');
+      document.getElementById('examModalTitle').innerText = 'Edit Exam';
+      const form = document.getElementById('examForm');
+      form.dataset.editingExamId = examId;
+      form.title.value = exam.title || '';
+      form.subject.value = exam.subject || '';
+      form.date.value = exam.date ? new Date(exam.date).toISOString().slice(0, 10) : '';
+      form.duration.value = exam.duration || '';
+      form.description.value = exam.description || '';
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  window.loadExams = async function() {
+    try {
+      const res = await fetch('/api/exams');
+      if (!res.ok) throw new Error('Failed to load exams');
+      const exams = await res.json();
+      const tbody = document.getElementById('examTable');
+      tbody.innerHTML = '';
+      exams.forEach(exam => {
+        const publishButtonLabel = exam.published ? 'Unpublish' : 'Publish';
+        const examStatus = (exam.status || '').toLowerCase();  // Normalize to lowercase
+        const statusOptions = ['upcoming', 'ongoing', 'completed', 'cancelled']
+        .map(status => {
+          const selected = status === examStatus ? 'selected' : '';
+          return `<option value="${status}" ${selected}>${status.charAt(0).toUpperCase() + status.slice(1)}</option>`;
+        })
+        .join('');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+       
+          <td class="py-2 px-4 border">${exam.title || ''}</td>
+          <td class="py-2 px-4 border">${exam.subject || ''}</td>
+          <td class="py-2 px-4 border">${exam.date ? new Date(exam.date).toLocaleDateString() : ''}</td>
+          <td class="py-2 px-4 border">${exam.duration ? exam.duration + ' mins' : ''}</td>
+          <td class="py-2 px-4 border">
+       
+          <select onchange="changeStatus(${exam.id}, this.value)">
+            ${statusOptions}
+          </select>
+        </td>
+        <td class="py-2 px-4 border">
+            <button class="btn-action bg-purple-600 text-white rounded px-2 py-1 mx-1 hover:bg-purple-900 transition" onclick="openQuestionsModal(${exam.id})">+ Questions</button>
+            <button class="btn-action bg-pink-600 text-white rounded px-2 py-1 mx-1 hover:bg-pink-700 transition" onclick="openMonitorModal(${exam.id})">Live Monitor</button>
+            <button class="btn-action bg-yellow-600 text-white rounded px-2 py-1 mx-1 hover:bg-yellow-700 transition" onclick="togglePublish(${exam.id}, this)">${publishButtonLabel}</button>
+            <button class="btn-action bg-orange-600 text-white rounded px-2 py-1 mx-1 hover:bg-orange-700 transition" onclick="openAssignModal(${exam.id})">Assign Students</button>
+            <button class="btn-action bg-green-600 text-white rounded px-2 py-1 mx-1 hover:bg-green-700 transition" onclick="sendExamLinks(${exam.id})"> Send Exam Links </button>
+            <button class="btn-action bg-blue-600 text-white rounded px-2 py-1 mx-1 hover:bg-blue-700 transition" onclick="editExam(${exam.id})">Edit</button>
+            <button class="btn-action bg-red-600 text-white rounded px-2 py-1 mx-1 hover:bg-red-700 transition" onclick="deleteExam(${exam.id})">Delete</button>
+            
+
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (err) {
+      console.error('Error rendering exams:', err);
+      alert('Error loading exams.');
+    }
+  };
+
+  window.openQuestionsModal = async function(examId, examTitle = '') {
+    currentExamId = examId;
+    editingQuestionId = null;
+    document.getElementById('currentExamTitle').innerText = examTitle || '';
+    document.getElementById('questionsModal').classList.remove('hidden');
+    document.getElementById('questionFormContainer').classList.add('hidden');
+    await loadQuestions();
+  };
+
+  window.closeQuestionsModal = function() {
+    document.getElementById('questionsModal').classList.add('hidden');
+    clearQuestionForm();
+  };
+
+  window.showAddQuestionForm = function() {
+    editingQuestionId = null;
+    clearQuestionForm();
+    document.getElementById('questionFormContainer').classList.remove('hidden');
+    toggleOptionsInput();
+  };
+
+  window.cancelAddQuestion = function() {
+    editingQuestionId = null;
+    clearQuestionForm();
+    document.getElementById('questionFormContainer').classList.add('hidden');
+  };
+
+  function clearQuestionForm() {
+    const questionText = document.getElementById('questionText');
+    const questionType = document.getElementById('questionType');
+    const marks = document.getElementById('marks');
+    const correctAnswer = document.getElementById('correctAnswer');
+    if (questionText) questionText.value = '';
+    if (questionType) questionType.value = 'objective';
+    if (correctAnswer) correctAnswer.value = '';
+    if (marks) marks.value = 1;
+    clearOptions();
+    toggleOptionsInput();
+  }
+
+
+
+
+
+  window.addOptionInput = function() {
+    const optionsContainer = document.getElementById('optionsContainer');
+    if (!optionsContainer) return;
+    const optionCount = optionsContainer.children.length + 1;
+    if (optionCount > 26) return alert('Maximum 26 options allowed');
+    const optionLabel = String.fromCharCode(64 + optionCount);
+    const div = document.createElement('div');
+    div.className = 'flex items-center gap-2 mb-2';
+    div.innerHTML = `
+      <span>${optionLabel}.</span>
+      <input type="text" class="optionInput border p-1 rounded flex-grow" />
+      <button type="button" class="text-red-600 font-bold px-2">X</button>
+    `;
+    div.querySelector('button').addEventListener('click', () => {
+      div.remove();
+      updateCorrectOptionSelect();
+    });
+    optionsContainer.appendChild(div);
+    updateCorrectOptionSelect();
+  };
+
+  function clearOptions() {
+    const optionsContainer = document.getElementById('optionsContainer');
+    if (optionsContainer) {
+      optionsContainer.innerHTML = '';
+      updateCorrectOptionSelect();
+    }
+  }
+
+  function updateCorrectOptionSelect() {
+    const correctAnswer = document.getElementById('correctAnswer');
+    const optionsContainer = document.getElementById('optionsContainer');
+    if (!correctAnswer || !optionsContainer) return;
+    correctAnswer.innerHTML = '';
+    Array.from(optionsContainer.children).forEach((div, idx) => {
+      const label = String.fromCharCode(65 + idx);
+      const optionText = div.querySelector('input').value || '(empty)';
+      const option = document.createElement('option');
+      option.value = label;
+      option.text = `${label}: ${optionText}`;
+      correctAnswer.add(option);
+    });
+  }
+
+  function toggleOptionsInput() {
+    const questionType = document.getElementById('questionType');
+    const optionsSection = document.getElementById('optionsSection');
+    if (questionType && optionsSection) {
+      optionsSection.style.display = questionType.value === 'objective' ? 'block' : 'none';
+    }
+  }
+
+  window.toggleOptionsInput = toggleOptionsInput;
+
+  // other functions here
+
+  document.getElementById('questionType')?.addEventListener('change', toggleOptionsInput);
+
+  window.submitQuestion = async function(event) {
+    event.preventDefault();
+    const questionText = document.getElementById('questionText')?.value.trim();
+    const questionType = document.getElementById('questionType')?.value;
+    const marks = +document.getElementById('marks')?.value || 1;
+    let options = null;
+    let correctAnswer = null;
+    if (questionType === 'objective') {
+      const optionInputs = document.querySelectorAll('#optionsContainer .optionInput');
+      options = Array.from(optionInputs).map(input => input.value.trim()).filter(v => v);
+      if (options.length < 2) {
+        alert('Please add at least two options.');
+        return;
+      }
+      const selectedOptionLabel = document.getElementById('correctAnswer').value;
+      const idx = selectedOptionLabel.charCodeAt(0) - 65;
+      if (idx < 0 || idx >= options.length) {
+        alert('Please select a valid correct option.');
+        return;
+      }
+      correctAnswer = options[idx];
+    }
+    const payload = {
+      question_text: questionText,
+      question_type: questionType,
+      options: options,
+      correct_answer: correctAnswer,
+      difficulty: "Medium",
+      marks: marks
+    };
+    try {
+      let url = `/api/exams/${currentExamId}/questions`;
+      let method = 'POST';
+      if (editingQuestionId) {
+        url = `/api/questions/${editingQuestionId}`;
+        method = 'PUT';
+      }
+      const response = await fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Failed to save question');
+      }
+      alert(editingQuestionId ? 'Question updated successfully.' : 'Question added successfully.');
+      cancelAddQuestion();
+      await loadQuestions();
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  window.loadQuestions = async function() {
+  try {
+    const res = await fetch(`/api/exams/${currentExamId}/questions`);
+    if (!res.ok) throw new Error('Failed to fetch questions');
+
+    const data = await res.json();
+    const questions = data.questions;
+
+    const list = document.getElementById('questionsList');
+    if (!list) return;
+
+    if (questions.length === 0) {
+      list.innerHTML = '<p class="italic text-gray-500">No questions added yet.</p>';
+      return;
+    }
+
+    let html = '<ol class="list-decimal pl-6 space-y-2">';
+    for (const q of questions) {
+      let opts = [];
+      if (Array.isArray(q.options)) {
+        opts = q.options;
+      } else if (q.options) {
+        try {
+          opts = JSON.parse(q.options);
+          if (!Array.isArray(opts)) opts = [opts];
+        } catch {
+          opts = q.options.split(',').map(o => o.trim());
+        }
+      }
+
+      html += `<li>
+        <p><strong>${q.question_text}</strong> (${q.question_type})</p>
+        ${q.question_type === 'objective'
+          ? `<p><em>Options:</em> ${opts.join('; ')}</p><p><em>Answer:</em> ${q.correct_answer || ''}</p>`
+          : ''}
+        <button onclick="editQuestion(${q.id})" class="text-blue-600 hover:underline mr-3">Edit</button>
+        <button onclick="deleteQuestion(${q.id})" class="text-red-600 hover:underline">Delete</button>
+      </li>`;
+    }
+    html += '</ol>';
+    list.innerHTML = html;
+  } catch (error) {
+    alert(error.message);
+  }
+};
+
+
+  window.editQuestion = async function(questionId) {
+  try {
+    const res = await fetch(`/api/questions/${questionId}`);
+    if (!res.ok) throw new Error('Failed to fetch question');
+
+    const q = await res.json();
+    window.editingQuestionId = questionId;
+
+    const qt = document.getElementById('questionText');
+    const qtype = document.getElementById('questionType');
+    const marks = document.getElementById('marks');
+    const correctAnswer = document.getElementById('correctAnswer');
+
+    if (qt) qt.value = q.question_text || '';
+    if (qtype) qtype.value = q.question_type || '';
+    if (marks) marks.value = q.marks || 1;
+
+    clearOptions();
+
+    if (q.question_type === 'objective' && q.options) {
+      let opts = [];
+
+      if (Array.isArray(q.options)) {
+        opts = q.options;
+      } else if (typeof q.options === "string") {
+        try {
+          const parsed = JSON.parse(q.options);
+          if (Array.isArray(parsed)) {
+            opts = parsed;
+          } else if (typeof parsed === "string") {
+            opts = parsed.split(',').map(o => o.trim());
+          } else {
+            opts = [parsed];
+          }
+        } catch {
+          opts = q.options.split(',').map(o => o.trim());
+        }
+      }
+
+      opts = opts.filter(o => o); // remove empty strings
+
+      opts.forEach(opt => {
+        window.addOptionInput();
+        const lastInput = document.querySelectorAll('#optionsContainer .optionInput');
+        if (lastInput && lastInput.length) {
+          lastInput[lastInput.length - 1].value = opt;
+        }
+      });
+
+      updateCorrectOptionSelect();
+
+      if (correctAnswer) {
+        const idx = opts.indexOf(q.correct_answer);
+        if (idx >= 0) correctAnswer.selectedIndex = idx;
+      }
+    }
+
+    document.getElementById('questionFormContainer')?.classList.remove('hidden');
+    toggleOptionsInput();
+
+  } catch (error) {
+    alert(error.message);
+  }
+};
+
+
+
+  window.deleteQuestion = async function(questionId) {
+    if (!confirm('Are you sure you want to delete this question?')) return;
+    try {
+      const res = await fetch(`/api/questions/${questionId}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete question');
+      alert('Question deleted');
+      await loadQuestions();
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+window.openAssignModal = async function(examId) {
+  window.currentAssignExamId = examId;
+  const modal = document.getElementById('assignStudentsModal');
+  const backdrop = document.getElementById('assignModalBackdrop');
+  if (!modal || !backdrop) {
+      alert("Modal or Backdrop not found in DOM!");
+      return;
+  }
+  modal.classList.remove('hidden');
+  backdrop.classList.remove('hidden');
+
+  const tbody = modal.querySelector('#assignStudentsTable tbody');
+  if (!tbody) {
+      alert("Table body missing in modal!");
+      return;
+  }
+  tbody.innerHTML = '<tr><td colspan="3">Loading...</td></tr>';
+  try {
+    const res = await fetch('/api/students');
+    if (!res.ok) throw new Error('Failed to load students');
+    const students = await res.json();
+
+    if (students.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="3">No registered active students found.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = '';
+    students.forEach(s => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+      <td><input type="checkbox" value="${s.id}" class="assign-student-checkbox"></td>
+    <td>${s.full_name}</td>
+    <td>${s.email}</td>
+    
+   
+   
+  `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="3" style="color:red">Error loading students: ${err.message}</td></tr>`;
+  }
+};
+
+window.viewAssignments = async function(student_id) {
+  try {
+    const res = await fetch(`/api/students/${student_id}/assignments`);
+    if (!res.ok) throw new Error('Could not load assignments');
+    const assignments = await res.json();
+    let message = 'Assigned Exams:\n';
+    if (assignments.length === 0) {
+      message += 'No exams assigned';
+    } else {
+      assignments.forEach(a => {
+        message += `${a.title} (${a.subject}) - ${a.status}\n`;
+      });
+    }
+    alert(message); // or show nicely in a modal
+  } catch (err) {
+    alert(err.message);
+  }
+};
+
+window.saveStudentAssignments = async function() {
+  const selectedCheckboxes = document.querySelectorAll('.assign-student-checkbox:checked');
+
+  if (selectedCheckboxes.length === 0) {
+    alert('Please select at least one student.');
+    return;
+  }
+  const studentIds = Array.from(selectedCheckboxes).map(cb => parseInt(cb.value));
+  const examId = window.currentAssignExamId;
+  if (!examId) {
+    alert('No exam selected for assigning.');
+    return;
+  }
+  try {
+    const res = await fetch(`/api/exams/${examId}/assign-students`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({studentIds: studentIds}),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || 'Failed to assign students.');
+    }
+    alert('Students assigned successfully!');
+    closeAssignModal();
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+};
+
+window.closeAssignModal = function() {
+  document.getElementById('assignStudentsModal').classList.add('hidden');
+  document.getElementById('assignModalBackdrop').classList.add('hidden');
+};
+
+document.getElementById('saveAssignBtn').addEventListener('click', saveStudentAssignments);
+document.getElementById('selectAllStudents').addEventListener('change', function(e) {
+  const checked = e.target.checked;
+  document.querySelectorAll('#assignStudentsTable tbody input[type=checkbox]').forEach(cb => {
+    cb.checked = checked;
+  });
+});
+
+document.getElementById('selectAllDeleteAssignments').addEventListener('change', function(e) {
+  const checked = e.target.checked;
+  document.querySelectorAll('#deleteAssignmentsModal .assign-delete-checkbox').forEach(cb => {
+    cb.checked = checked;
+  });
+});
+document.getElementById('deleteAssignmentsSaveBtn').addEventListener('click', async () => {
+  const checkboxes = document.querySelectorAll('.assign-delete-checkbox:checked');
+  if(checkboxes.length === 0) {
+    alert('Please select at least one assignment to delete.');
+    return;
+  }
+  
+  if(!confirm('Confirm delete selected assignments?')) return;
+
+  try {
+    for(const cb of checkboxes) {
+      const assignmentId = cb.value;
+      const res = await fetch(`/api/exam_assignments/${assignmentId}`, { method: 'DELETE' });
+      if(!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed to delete assignment id ' + assignmentId);
+      }
+    }
+    alert('Selected assignments deleted.');
+    document.getElementById('deleteAssignmentsModal').classList.add('hidden');
+
+    // Refresh assignments view for current student
+    if(window.viewAssignments) {
+      window.viewAssignments(window.currentDeleteStudentId);
+    }
+  } catch(err) {
+    alert('Error deleting: ' + err.message);
+  }
+});
+
+
+  const importModal = document.getElementById('importCsvModal');
+  const csvInput = document.getElementById('csvFileInput');
+  const closeBtn = document.getElementById('closeImportCsvModal');
+  const importBtn = document.getElementById('startImportCsv');
+
+  window.openImportCsvModal = function() {
+    csvInput.value = '';  // clear previous selection
+    importModal.classList.remove('hidden');
+  };
+
+  closeBtn.addEventListener('click', function() {
+    importModal.classList.add('hidden');
+  });
+
+  importBtn.addEventListener('click', function() {
+    const file = csvInput.files[0];
+    if (!file) {
+      alert('Please select a CSV file to import.');
+      return;
+    }
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      alert('Invalid file type. Please upload a CSV file.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch(`/api/exams/${window.currentExamId}/import_csv`, {
+      method: 'POST',
+      body: formData
+    }).then(async response => {
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Import failed.');
+      }
+      return response.json();
+    }).then(data => {
+      alert(data.message || 'Import successful!');
+      importModal.classList.add('hidden');
+      // Refresh your questions list
+      if(window.loadQuestions) {
+        window.loadQuestions();
+      }
+    }).catch(err => {
+      alert('Import failed: ' + err.message);
+    });
+  });
+
+
+ window.triggerCSVImport = function() {
+  document.getElementById('csvInput').click();
+};
+
+document.getElementById('csvInput').addEventListener('change', function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  // Check file extension on client side first (optional, but better UX)
+  if (!file.name.endsWith('.csv')) {
+    alert('Invalid file type. Please upload a CSV file.');
+    return;
+  }
+  const formData = new FormData();
+  formData.append('file', file);
+
+  fetch(`/api/exams/${window.currentExamId}/import_csv`, {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert(data.message || 'Import done!');
+    loadQuestions();
+  })
+  .catch(err => { alert('Import failed: ' + err.message); });
+});
+
+  window.openMonitorModal = async function(examId) {
+    document.getElementById('monitorModal').classList.remove('hidden');
+    const tbody = document.getElementById('monitorTableBody');
+    tbody.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
+    try {
+      const response = await fetch(`/api/exams/${examId}/live_monitor`);
+      if (!response.ok) throw new Error('Failed to fetch live monitoring data');
+      const students = await response.json();
+      if (students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5">No live data available.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = students.map(s => `
+        <tr>
+          <td class="border px-4 py-2">${s.name}</td>
+          <td class="border px-4 py-2">${s.status}</td>
+          <td class="border px-4 py-2">${s.start_time}</td>
+          <td class="border px-4 py-2">${s.cheating_submission}</td>
+          <td class="border px-4 py-2">${s.score !== null ? s.score : '--'}</td>
+        </tr>
+      `).join('');
+    } catch (error) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-red-600">Error loading data</td></tr>`;
+      console.error(error);
+    }
+  };
+
+  window.closeMonitorModal = function() {
+    document.getElementById('monitorModal').classList.add('hidden');
+  };
+
+  window.toggleExamStatus = async function(examId) {
+    try {
+      const res = await fetch(`/api/exams/${examId}/cycle_status`, { method: 'POST' });
+      if (!res.ok) throw new Error('Failed to update status.');
+      const data = await res.json();
+      document.getElementById(`status-badge-${examId}`).innerText = data.status;
+      alert(data.message);
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+window.changeStatus = function changeStatus(examId, newStatus) {
+  const formattedStatus = newStatus.charAt(0).toUpperCase() + newStatus.slice(1).toLowerCase();
+  fetch(`/api/exams/${examId}/update_status`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({status: formattedStatus})
+  })
+  .then(res => {
+    if(!res.ok) throw new Error('Failed to update status');
+    return res.json();
+  })
+  .then(data => {
+    alert('Status updated to: ' + data.status);
+    loadExams();
+  })
+  .catch(err => alert(err.message));
+}
+
+window.togglePublish = function(examId,btn) {
+  fetch(`/api/exams/${examId}/toggle_publish`, { method: 'POST' })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.published ? 'Exam is now visible to students.' : 'Exam is now hidden.');
+      btn.innerText = data.published ? 'Unpublish' : 'Publish';
+      loadExams(); // This will re-fetch exam data and update button labels
+    })
+    .catch(err => alert('Error toggling publish: ' + err.message));
+};
+
+window.loadStudents = async function() {
+  try {
+    const res = await fetch('/api/students');
+    if (!res.ok) throw new Error('Failed to fetch students');
+    window.studentsData = await res.json();
+    renderStudentsTable(window.studentsData);
+  } catch (err) {
+    alert(err.message);
+  }
+};
+
+// Show modal and load exams
+window.showExportModal = function() {
+    document.getElementById('exportModal').classList.remove('hidden');
+    fetch('/api/exams')
+        .then(res => res.json())
+        .then(exams => {
+            const examsList = document.getElementById('examsList');
+            examsList.innerHTML = exams.map(exam =>
+                `<label><input type="checkbox" name="selectedExams" value="${exam.id}"> ${exam.title}</label>`
+            ).join('');
+        });
+}
+
+// Select all logic
+document.getElementById('selectAllExams').addEventListener('change', function(e) {
+    document.querySelectorAll('input[name="selectedExams"]').forEach(cb => cb.checked = e.target.checked);
+});
+
+// Export handler
+document.getElementById('exportForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const selected = Array.from(document.querySelectorAll('input[name="selectedExams"]:checked')).map(cb => cb.value);
+    if (selected.length === 0) return alert('Please select at least one exam.');
+    // Call backend API
+    for (const examId of selected) {
+        const res = await fetch(`/api/exam/${examId}/questions/export`, { method: 'GET' });
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `questions_exam_${examId}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+    closeExportModal();
+});
+window.closeExportModal = function() {
+    document.getElementById('exportModal').classList.add('hidden');
+};
+
+
+
+function renderStudentsTable(students) {
+  const tbody = document.querySelector('#studentsTable tbody');
+  tbody.innerHTML = '';
+  students.forEach(s => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${s.full_name}</td>
+      <td>${s.email}</td>
+      <td>${s.username || ''}</td>
+      <td>${s.status || 'Unknown'}</td>
+      <td>
+        <button style="background:#007bff;color:#fff;padding:4px 12px;border-radius:4px;" onclick="viewAssignments(${s.id})" class="btn btn-blue">View</button>
+      </td>
+      <td>
+        
+        <button style="background:#28a745;color:#fff;padding:4px 12px;border-radius:4px;" onclick="openAssignExamModal(${s.id})" class="btn btn-green">Assign</button>
+       <button style="background:red;color:#fff;padding:4px 12px;border-radius:4px;" onclick="openDeleteAssignmentsModal(${s.id})" class="btn btn-red">Delete</button>
+        </td>
+       
+    
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+
+document.getElementById('searchStudentInput').addEventListener('input', filterStudents);
+document.getElementById('statusFilter').addEventListener('change', filterStudents);
+
+window.openDeleteAssignmentsModal = async function(studentId) {
+  window.currentDeleteStudentId = studentId;
+  const modal = document.getElementById('deleteAssignmentsModal');
+  if(!modal) {
+    alert('Delete Assignments modal not found.');
+    return;
+  }
+  modal.classList.remove('hidden');
+
+  const tbody = modal.querySelector('tbody');
+  tbody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+
+  try {
+    const res = await fetch(`/api/students/${studentId}/assignments`);
+    if(!res.ok) throw new Error('Failed to load assignments.');
+    const assignments = await res.json();
+
+    if(assignments.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4">No exam assignments found.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = '';
+    assignments.forEach(a => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="checkbox" value="${a.assignment_id}" class="assign-delete-checkbox"></td>
+        <td>${a.title}</td>
+        <td>${a.subject}</td>
+        <td>${a.status}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+  } catch(err) {
+    tbody.innerHTML = `<tr><td colspan="4" style="color:red;">${err.message}</td></tr>`;
+  }
+}
+
+
+window.deleteAssignment = async function(assignmentId) {
+  if (!confirm('Confirm delete?')) return;
+  try {
+    const res = await fetch(`/api/exam_assignments/${assignmentId}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (res.ok) {
+      alert(data.message);
+      // Refresh UI accordingly
+    } else {
+      alert(data.error || 'Delete failed');
+    }
+  } catch (err) {
+    alert('Error deleting assignment: ' + err.message);
+  }
+}
+
+
+window.openAssignExamModal = async function(studentId) {
+  // Fetch all exams
+  const res = await fetch('/api/exams');
+  if (!res.ok) {
+    alert('Failed to load exams.');
+    return;
+  }
+  const exams = await res.json();
+  const options = exams.map(e => `<option value="${e.id}">${e.title} (${e.subject})</option>`).join('');
+  
+  // Create modal HTML
+  const modal = document.createElement('div');
+  modal.style = `
+    position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;
+    background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;
+  `;
+  modal.innerHTML = `
+    <form id="assignExamForm" style="background:white;padding:2em;border-radius:10px;min-width:300px;">
+      <h3>Assign Exam to Student</h3>
+      <select name="exam_id" style="width:100%;margin:1em 0;">
+        <option value="">Select Exam</option>
+        ${options}
+      </select>
+      <button type="submit">Assign</button>
+      <button type="button" id="closeAssignExamModal" style="margin-left:1em;">Cancel</button>
+    </form>
+  `;
+  document.body.appendChild(modal);
+
+  document.getElementById('closeAssignExamModal').onclick = function() {
+    modal.remove();
+  };
+
+  document.getElementById('assignExamForm').onsubmit = async function(e) {
+    e.preventDefault();
+    const exam_id = this.exam_id.value;
+    if (!exam_id) return alert('Please select an exam to assign.');
+    const assignRes = await fetch(`/api/students/${studentId}/assign-exam`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ exam_id })
+    });
+    if (assignRes.ok) {
+      alert('Exam assigned!');
+      modal.remove();
+    } else {
+      const err = await assignRes.json();
+      alert('Assignment failed: ' + (err.error || 'Unknown error.'));
+    }
+  };
+};
+
+
+function filterStudents() {
+  const term = document.getElementById('searchStudentInput').value.toLowerCase().trim();
+  const status = document.getElementById('statusFilter').value;
+  const filtered = (window.studentsData || []).filter(stu => {
+    const matchesTerm =
+      term === '' ||
+      (stu.full_name && stu.full_name.toLowerCase().includes(term)) ||
+      (stu.email && stu.email.toLowerCase().includes(term));
+    const matchesStatus = status === '' || (stu.status === status);
+    return matchesTerm && matchesStatus;
+  });
+  renderStudentsTable(filtered);
+}
+
+  // Globals for current exam/question
+  window.currentExamId = null;
+  window.editingQuestionId = null;
+
+  // Initial load
+  loadExams();
+});
+</script>
+<script>
+  // Function to send exam links to all registered students
+function sendExamLinks(examId) {
+  if (!confirm("Send exam links only to assigned students for this exam?")) {
+    return; // Cancel if user declines
+  }
+
+  fetch(`/api/exams/${examId}/send-links`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => {
+    if (!response.ok) {
+      return response.json().then(err => {
+        throw new Error(err.message || 'Failed to send exam links.');
+      });
+    }
+    return response.json();
+  })
+  .then(data => {
+    alert(data.message || 'Exam links sent successfully.');
+  })
+  .catch(error => {
+    alert('Error: ' + error.message);
+    console.error('Send Exam Links error:', error);
+  });
+}
+</script>
+<script>
+const examId = 1; // Replace with dynamic exam ID
+
+// Enhanced results loader: fetches and renders table + chart
+function loadResults(examId) {
+  if (!examId) {
+    document.getElementById('resultsBody').innerHTML =
+      '<tr><td colspan="5">No exam selected.</td></tr>';
+    clearChart();
+    return;
+  }
+
+  fetch(`/api/exams/${examId}/results`)
+    .then(res => res.json())
+    .then(results => {
+      const tbody = document.getElementById('resultsBody');
+      tbody.innerHTML = '';
+
+      if (!results || results.length === 0) {
+        tbody.innerHTML =
+          '<tr><td colspan="5">No results found.</td></tr>';
+        clearChart();
+        return;
+      }
+
+      results.forEach(r => {
+        const cheatingText = r.cheating_detected ? 'Yes' : 'No';
+        const attemptId = r.attempt_id; // make sure this exists
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${r.full_name}</td>
+            <td>${r.exam_status || 'N/A'}</td>
+            <td>${r.score != null ? r.score : '--'}</td>
+            <td>${cheatingText}</td>
+            <td>
+              <button class="bg-purple-700 text-white px-3 py-1 rounded"
+                      onclick="openGradingModal(${r.attempt_id})">
+                Manual Grading
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      // Refresh chart
+      loadChart(examId);
+    })
+    .catch(err => {
+      console.error('Error loading results:', err);
+      document.getElementById('resultsBody').innerHTML =
+        '<tr><td colspan="5">Failed to load results.</td></tr>';
+      clearChart();
+    });
+}
+
+
+const analyticsModal = document.getElementById('analyticsModal');
+const closeAnalyticsBtn = document.getElementById('closeAnalyticsBtn');
+let analyticsChartInstance = null;
+
+// Open analytics modal and render bar chart
+document.getElementById('openAnalyticsBtn').addEventListener('click', () => {
+  const examId = document.getElementById('examSelect').value;
+  if (!examId) {
+    alert('Please select an exam first');
+    return;
+  }
+  analyticsModal.classList.remove('hidden');
+  analyticsModal.classList.add('flex');
+
+  fetch(`/api/exams/${examId}/stats`).then(res => res.json()).then(data => {
+    if (data.error) {
+      alert(data.error);
+      closeAnalyticsModal();
+      return;
+    }
+    const ctx = document.getElementById('analyticsChart').getContext('2d');
+    if (analyticsChartInstance) analyticsChartInstance.destroy();
+    analyticsChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: data.scores.map((_, i) => `Student ${i + 1}`),
+        datasets: [{
+          label: 'Scores',
+          data: data.scores,
+          backgroundColor: 'rgba(75, 192, 192, 0.6)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  }).catch(err => {
+    alert('Failed to load analytics: ' + err.message);
+    closeAnalyticsModal();
+  });
+});
+
+// Close analytics modal
+function closeAnalyticsModal() {
+  analyticsModal.classList.add('hidden');
+  analyticsModal.classList.remove('flex');
+}
+closeAnalyticsBtn.addEventListener('click', closeAnalyticsModal);
+analyticsModal.addEventListener('click', e => {
+  if (e.target === analyticsModal) closeAnalyticsModal();
+});
+
+
+const resultSummaryModal = document.getElementById('resultSummaryModal');
+const resultSummaryContent = document.getElementById('resultSummaryContent');
+const closeBtn = document.getElementById('closeResultSummaryBtn');
+
+// Open modal function
+document.getElementById('openResultSummaryBtn').addEventListener('click', () => {
+  const examId = document.getElementById('examSelect').value;
+  if (!examId) return alert('Please select an exam first');
+  
+  resultSummaryModal.classList.remove('hidden');
+  resultSummaryModal.classList.add('flex');
+
+  resultSummaryContent.querySelectorAll('span').forEach(span => span.textContent = 'Loading...');
+
+  fetch(`/api/exams/${examId}/stats`)
+    .then(res => res.json())
+    .then(data => {
+      if(data.error){
+        alert(data.error);
+        closeResultSummary();
+        return;
+      }
+      const scores = data.scores || [];
+      document.getElementById('avgScore').textContent = (data.average ?? (scores.reduce((a,b) => a + b, 0) / scores.length)).toFixed(2);
+      document.getElementById('highScore').textContent = data.highest ?? Math.max(...scores);
+      document.getElementById('lowScore').textContent = data.lowest ?? Math.min(...scores);
+      document.getElementById('totalStudents').textContent = scores.length;
+    })
+    .catch(err => {
+      alert('Failed to load summary: ' + err.message);
+      closeResultSummary();
+    });
+});
+
+// Close modal with animation
+function closeResultSummary() {
+  resultSummaryModal.classList.add('animate-fadeOut');
+  setTimeout(() => {
+    resultSummaryModal.classList.add('hidden');
+    resultSummaryModal.classList.remove('flex', 'animate-fadeOut');
+  }, 300);
+}
+
+closeBtn.addEventListener('click', closeResultSummary);
+
+// Close modal on clicking outside content box
+resultSummaryModal.addEventListener('click', (e) => {
+  if(e.target === resultSummaryModal){
+    closeResultSummary();
+  }
+});
+
+
+// Chart.js instance holder
+let scoreChartInstance = null;
+function loadChart(examId) {
+  fetch(`/api/exams/${examId}/stats`)
+    .then(res => res.json())
+    .then(data => {
+      if (scoreChartInstance) scoreChartInstance.destroy(); // Destroy previous chart
+
+      const ctx = document.getElementById('scoreChart').getContext('2d');
+      scoreChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.scores.map((_, i) => `Student ${i + 1}`),
+          datasets: [{
+            label: 'Scores',
+            data: data.scores,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    })
+    .catch(() => {
+      clearChart();
+    });
+}
+
+function clearChart() {
+  if (scoreChartInstance) {
+    scoreChartInstance.destroy();
+    scoreChartInstance = null;
+  }
+}
+
+
+document.getElementById('searchStudentResult').addEventListener('input', function () {
+  const searchTerm = this.value.toLowerCase().trim();
+  const rows = document.querySelectorAll('#resultsBody tr');
+  rows.forEach(row => {
+    const nameCell = row.cells[0]?.textContent?.toLowerCase() || '';
+    row.style.display = nameCell.includes(searchTerm) ? '' : 'none';
+  });
+});
+
+
+// Open grading modal and render question grading fields
+function openGradingModal(attemptId) {
+  const modal = document.getElementById('gradingModal');
+  const content = document.getElementById('gradingContent');
+
+  modal.dataset.attemptId = attemptId;
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+
+  content.innerHTML = 'Loading...';
+
+  fetch(`/api/attempts/${attemptId}/answers`)
+    .then(res => res.json())
+    .then(data => {
+      const answers = data.answers || [];
+      if (!answers.length) {
+        content.innerHTML = '<p>No answers found.</p>';
+        return;
+      }
+
+      const html = answers.map(q => `
+        <div class="mb-4 border-b pb-3">
+          <p><strong>${q.question_text}</strong> (${q.question_type})</p>
+          <p><em>Correct Answer:</em> ${q.correct_answer || ''}</p>
+          <p><em>Student's Answer:</em> ${q.answer || ''}</p>
+
+          ${q.question_type === 'objective' ? 
+            `<p><em>Marks (auto-assigned):</em> 
+             <input type="number" disabled value="${q.marks_assigned || 0}" class="border rounded p-1 w-20 bg-gray-100 cursor-not-allowed" />
+             </p>` 
+             : 
+             `Assign Marks (Max: ${q.max_marks}):
+                <input type="number" data-qid="${q.question_id}" min="0" max="${q.max_marks || 10}" step="0.1" class="border rounded p-1 w-20" value="${q.marks_assigned || 0}" />
+             </label>`}
+        </div>
+      `).join('');
+      content.innerHTML = html;
+    })
+    .catch(() => {
+      content.innerHTML = '<p>Error loading answers.</p>';
+    });
+}
+
+
+
+// Close grading modal
+function closeGradingModal() {
+  const modal = document.getElementById('gradingModal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+  document.getElementById('gradingContent').innerHTML = '';
+}
+document.getElementById('closeGradingBtn').addEventListener('click', closeGradingModal);
+
+
+document.getElementById('gradingModal').addEventListener('click', function (e) {
+  if (e.target === this) {
+    this.classList.add('hidden');
+    this.classList.remove('flex');
+  }
+});
+
+
+// Submit grading data to backend
+document.getElementById('saveGradesBtn').addEventListener('click', () => {
+  const modal = document.getElementById('gradingModal');
+  const attemptId = modal.dataset.attemptId;
+  const inputs = modal.querySelectorAll("input[type='number']:not(:disabled)");
+  let gradingScores = {};
+  inputs.forEach(input => {
+    const qid = input.dataset.qid;
+    const score = parseFloat(input.value);
+    if (!isNaN(score)) gradingScores[qid] = score;
+  });
+
+  fetch(`/api/attempts/${attemptId}/grade`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ grading_scores: gradingScores }),
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('Failed to save grading.');
+    return res.json();
+  })
+  .then(data => {
+    alert('Grades saved successfully!');
+    const selectedExamId = document.getElementById('examSelect').value;
+    loadResults(selectedExamId); 
+  
+  })
+  .catch(err => alert(err.message));
+});
+
+
+
+
+// Send grading notification email
+document.getElementById('sendEmailBtn').addEventListener('click', () => {
+  const modal = document.getElementById('gradingModal');
+  const attemptId = modal.dataset.attemptId;
+
+  fetch(`/api/attempts/${attemptId}/send_email`, {
+    method: 'POST',
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('Failed to send email.');
+    return res.json();
+  })
+  .then(data => alert(data.message))
+  .catch(err => alert(err.message));
+});
+
+
+function exportResults() {
+  const examId = document.getElementById('examSelect').value;
+  if (!examId) {
+    alert('Please select an exam to export results.');
+    return;
+  }
+  window.open(`/api/exams/${examId}/export_results_excel`, '_blank');
+}
+
+function viewAnswers(examId, studentId) {
+    openGradingModal(attemptId);
+}
+
+function renderChart(data) {
+    let ctx = document.getElementById('scoreChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.map(r => r.student_name),
+            datasets: [{
+                label: "Scores",
+                data: data.map(r => r.score),
+                backgroundColor: "rgba(54, 162, 235, 0.6)",
+                borderColor: "rgba(54, 162, 235, 1)",
+                borderWidth: 1
+            }]
+        }
+    });
+}
+
+</script>
+<script>
+// Populate exam select dropdown on page load or tab switch
+function populateExamSelect() {
+  const select = document.getElementById('examSelect');
+  select.innerHTML = '';
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '';
+  defaultOption.textContent = '-- Select an exam --';
+  select.appendChild(defaultOption);
+  fetch('/api/exams')
+    .then(res => res.json())
+    .then(exams => {
+      exams.forEach(exam => {
+        const option = document.createElement('option');
+        option.value = exam.id;
+        option.textContent = `${exam.title} (${exam.subject})`;
+        select.appendChild(option);
+      });
+    });
+}
+
+// Bind dropdown change and initialize page
+document.getElementById('examSelect').addEventListener('change', () => {
+  const examId = document.getElementById('examSelect').value;
+  loadResults(examId);
+});
+
+// Initial population on page load
+document.addEventListener('DOMContentLoaded', () => {
+ 
+  // Clear table/chart initially
+  document.getElementById('resultsBody').innerHTML = '<tr><td colspan="5">Select an exam to load results</td></tr>';
+  clearChart();
+});
+
+window.handleExamChange = function() {
+  const examId = document.getElementById('examSelect').value;
+  if (examId) {
+    loadResults(examId);
+  } else {
+    document.getElementById('resultsBody').innerHTML = '<tr><td colspan="5" class="py-6 text-gray-500 font-semibold">Select an exam to load results</td></tr>';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  populateExamSelect();
+  // Others init...
+});
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  fetch('/api/teacher/dashboard_stats')
+    .then(res => res.json())
+    .then(stats => {
+        document.getElementById('examCount').textContent = stats.my_exams;
+        document.getElementById('activeStudentCount').textContent = stats.students_monitored;
+        document.getElementById('pendingGradingCount').textContent = stats.pending_grading;
+        document.getElementById('completedExamCount').textContent = stats.exams_completed;
+    })
+    .catch(() => {
+        document.getElementById('examCount').textContent = '--';
+        document.getElementById('activeStudentCount').textContent = '--';
+        document.getElementById('pendingGradingCount').textContent = '--';
+        document.getElementById('completedExamCount').textContent = '--';
+    });
+});
+</script>
+<script>
+ document.addEventListener('DOMContentLoaded', () => {
+  // Populate profile view and edit fields
+  window.populateProfileFields = function(data) {
+    document.getElementById('view-profile-picture').src = data.profile_picture_url || '/static/teacher icon.jpg';
+    document.getElementById('view_username').innerText = data.username || '';
+    document.getElementById('view_full_name').innerText = data.full_name || '';
+    document.getElementById('view_dob').innerText = data.dob || '';
+    document.getElementById('view_gender').innerText = data.gender || '';
+    document.getElementById('view_email').innerText = data.email || '';
+    document.getElementById('view_alt_email').innerText = data.alt_email || '';
+    document.getElementById('view_phone').innerText = data.phone || '';
+    document.getElementById('view_street').innerText = data.street || '';
+    document.getElementById('view_city').innerText = data.city || '';
+    document.getElementById('view_state').innerText = data.state || '';
+    document.getElementById('view_zip').innerText = data.zip || '';
+    document.getElementById('view_country').innerText = data.country || '';
+    document.getElementById('view_department_teacher').innerText = data.department_teacher || '';
+    document.getElementById('view_courses_handling').innerText = data.courses_handling || '';
+    document.getElementById('view_designation').innerText = data.designation || '';
+    document.getElementById('view_experience').innerText = data.experience || '';
+    document.getElementById('view_qualifications').innerText = data.qualifications || '';
+
+    // Edit mode fields
+    document.getElementById('edit-profile-picture-preview').src = data.profile_picture_url || '/static/teacher icon.jpg';
+    document.getElementById('edit_username').value = data.username || '';
+    document.getElementById('edit_full_name').value = data.full_name || '';
+    document.getElementById('edit_dob').value = data.dob || '';
+    document.getElementById('edit_gender').value = data.gender || '';
+    document.getElementById('edit_email').value = data.email || '';
+    document.getElementById('edit_alt_email').value = data.alt_email || '';
+    document.getElementById('edit_phone').value = data.phone || '';
+    document.getElementById('edit_street').value = data.street || '';
+    document.getElementById('edit_city').value = data.city || '';
+    document.getElementById('edit_state').value = data.state || '';
+    document.getElementById('edit_zip').value = data.zip || '';
+    document.getElementById('edit_country').value = data.country || '';
+    document.getElementById('edit_department_teacher').value = data.department_teacher || '';
+    document.getElementById('edit_courses_handling').value = data.courses_handling || '';
+    document.getElementById('edit_designation').value = data.designation || '';
+    document.getElementById('edit_experience').value = data.experience || '';
+    document.getElementById('edit_qualifications').value = data.qualifications || '';
+  }
+
+
+  window.fetchAndDisplayProfile = async function() {
+    try {
+      const response = await fetch('/api/teacher/get_profile');
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      populateProfileFields(data);
+    } catch (error) {
+      const msgEl = document.getElementById('message');
+      msgEl.innerText = 'Failed to load profile data: ' + error.message;
+      msgEl.style.color = 'red';
+    }
+  }
+
+
+  document.getElementById('editBtn').addEventListener('click', () => {
+    document.getElementById('profile-view').style.display = 'none';
+    document.getElementById('profile-edit').style.display = 'block';
+    document.getElementById('message').innerText = '';
+});
+
+
+  document.getElementById('cancelBtn').addEventListener('click', () => {
+    document.getElementById('profile-edit').style.display = 'none';
+    document.getElementById('profile-view').style.display = 'block';
+    fetchAndDisplayProfile();
+    document.getElementById('message').innerText = '';
+});
+
+
+  const profileInput = document.getElementById('edit-profile-picture');
+  const profilePreview = document.getElementById('edit-profile-picture-preview');
+  const imageError = document.getElementById('image_error');
+
+  const MAX_SIZE_MB = 2;
+  const MAX_WIDTH = 1024;
+  const MAX_HEIGHT = 1024;
+
+  profileInput.addEventListener('change', function () {
+    imageError.textContent = '';
+    if (!this.files[0]) {
+      profilePreview.src = '/static/teacher icon.jpg';
+      return;
+    }
+
+    const file = this.files[0];
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+    if (!validTypes.includes(file.type)) {
+      imageError.textContent = 'Invalid file type. Please upload JPG, PNG, or GIF image.';
+      profileInput.value = '';
+      profilePreview.src = '/static/teacher icon.jpg';
+      return;
+    }
+
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      imageError.textContent = `File too large. Max size is ${MAX_SIZE_MB}MB.`;
+      profileInput.value = '';
+      profilePreview.src = '/static/teacher icon.jpg';
+      return;
+    }
+
+    const img = new Image();
+    img.onload = function () {
+      if (img.width > MAX_WIDTH || img.height > MAX_HEIGHT) {
+        imageError.textContent = `Image dimensions too large. Max allowed: ${MAX_WIDTH}x${MAX_HEIGHT}px.`;
+        profileInput.value = '';
+        profilePreview.src = '/static/teacher icon.jpg';
+      } else {
+        imageError.textContent = '';
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          profilePreview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    img.onerror = function () {
+      imageError.textContent = 'Invalid image file.';
+      profileInput.value = '';
+      profilePreview.src = '/static/teacher icon.jpg';
+    };
+    img.src = URL.createObjectURL(file);
+  });
+
+
+  document.getElementById('profile-edit').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!confirm('Are you sure you want to save changes?')) return;
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    try {
+      const res = await fetch('/api/teacher/update_profile', {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await res.json();
+      if (result.error) {
+        document.getElementById('message').innerText = result.error;
+        document.getElementById('message').style.color = 'red';
+      } else {
+        document.getElementById('message').innerText = 'Profile updated successfully!';
+        document.getElementById('message').style.color = 'green';
+        document.getElementById('profile-edit').style.display = 'none';
+        document.getElementById('profile-view').style.display = 'block';
+        populateProfileFields(result);
+      }
+    } catch (err) {
+      document.getElementById('message').innerText = 'Failed to save profile.';
+      document.getElementById('message').style.color = 'red';
+    }
+  });
+
+  // Initial load
+  fetchAndDisplayProfile();
+
+
+});
+
+
+</script>
+</body>
+</html>

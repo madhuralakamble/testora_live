@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ page_title or "Complete Your Profile - Testora" }}</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Background gradient waves and other styles from your theme */
+    body {
+      background: radial-gradient(circle at top left, #3b82f6, #9333ea, #111);
+      background-size: 300% 300%;
+      animation: bgWave 15s ease infinite;
+    }
+    @keyframes bgWave {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+    .gradient-hover {
+      background-image: linear-gradient(90deg, rgb(90, 21, 146), #9333ea, #6a2abd);
+      background-size: 200% auto;
+      transition: background-position 0.5s, color 0.5s;
+    }
+    .gradient-hover:hover {
+      background-position: right center;
+      color: white;
+    }
+    header {
+      background: white;
+      box-shadow: 0 3px 12px rgba(184,16,250,0.473);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .header-container {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 14px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .logo img {
+      height: 75px;
+      width: auto;
+    }
+    .logo span {
+      font-family: 'Poppins', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #5f0494;
+    }
+    nav a {
+      font-weight: 600;
+      font-size: 1rem;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      width: 0%;
+      height: 2px;
+      background: #6c3dc7;
+      transition: 0.3s ease;
+      transform: translateX(-50%);
+    }
+    nav a:hover::after {
+      width: 60%;
+    }
+    footer {
+      max-width: 960px;
+      margin: 100px auto 40px auto;
+      text-align: center;
+      color: #a39dc0;
+      font-size: 0.95rem;
+      position: relative;
+      z-index: 5;
+    }
+    .footer-social {
+      margin-top: 20px;
+      font-size: 2rem;
+    }
+    .footer-social a {
+      margin: 0 14px;
+      color: #6b3cc6;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+     /* Floating circles animation */
+    @keyframes floatSlow {
+      0%   { transform: translateY(0) scale(1); opacity: 0.18; }
+      50%  { transform: translateY(-80px) scale(1.13); opacity: 0.32;}
+      100% { transform: translateY(0) scale(1); opacity: 0.18;}
+    }
+    @keyframes floatSlower {
+      0%   { transform: translateY(0) scale(1); opacity: 0.13; }
+      50%  { transform: translateY(-110px) scale(1.19); opacity: 0.35;}
+      100% { transform: translateY(0) scale(1); opacity: 0.13;}
+    }
+    @keyframes floatSlowest {
+      0%   { transform: translateY(0) scale(1); opacity: 0.13; }
+      50%  { transform: translateY(-180px) scale(1.28); opacity: 0.39;}
+      100% { transform: translateY(0) scale(1); opacity: 0.13;}
+    }
+    .float-slow    { animation: floatSlow 9s ease-in-out infinite; }
+    .float-slower  { animation: floatSlower 13s ease-in-out infinite;}
+    .float-slowest { animation: floatSlowest 18s ease-in-out infinite;}
+
+    /* Login form styles */
+    .container label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #5f0494;
+    }
+    .container input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    
+    .container button {
+      margin-top: 28px;
+      padding: 0.8rem 1rem;
+      background: linear-gradient(90deg, #6c3c96, #a97fff);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 0 0.8rem #8849d1cc;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: block;
+      width: 100%;
+      animation: pulse 3s infinite;
+    }
+    .container button:hover {
+      background: linear-gradient(90deg, #6f1e9e, #7e49af);
+      transform: scale(1.08);
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 1rem #a97fff88; }
+      50% { box-shadow: 0 0 2rem #a97fffcc; }
+    }
+    .container .message {
+      margin-top: 16px;
+      font-weight: 600;
+      min-height: 22px;
+    }
+    .block {
+      position: relative;
+      width: 100%;
+    }
+
+  </style>
+</head>
+<body>
+    <!-- Floating Circles Background -->
+  <div class="fixed rounded-full bg-white float-slow opacity-15" style="width:90px;height:90px;top:9vh;left:10vw;"></div>
+  <div class="fixed rounded-full bg-white float-slow opacity-10" style="width:120px;height:120px;top:4vh;left:82vw;"></div>
+  <div class="fixed rounded-full bg-white float-slower opacity-20" style="width:70px;height:70px;top:51vh;left:22vw;"></div>
+  <div class="fixed rounded-full bg-white float-slowest opacity-12" style="width:200px;height:200px;top:66vh;left:68vw;"></div>
+  <div class="fixed rounded-full bg-white float-slow opacity-10" style="width:65px;height:65px;top:19vh;left:59vw;"></div>
+  <div class="fixed rounded-full bg-purple-200 float-slower opacity-10" style="width:110px;height:110px;top:80vh;left:13vw;"></div>
+  <!-- Navbar -->
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Testora Logo" class="mx-auto rounded-full shadow-lg" />
+        <span>Testora</span>
+      </div>
+      <nav>
+        <a href="/" class="gradient-hover">Home</a>
+        <a href="/register" class="gradient-hover">Register</a>
+        <a href="/login-page" class="gradient-hover">Login</a>
+        <a href="#contact" class="gradient-hover">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container bg-white rounded-xl shadow-xl p-10 max-w-xl mx-auto mt-28 text-gray-900">
+    <h2 class="text-3xl font-bold mb-8 text-center text-black-700">Complete Your Profile</h2>
+
+    <form id="profile-form" enctype="multipart/form-data" class="space-y-6 max-w-lg mx-auto">
+
+
+  <!-- Profile Picture -->
+  <div>
+  <label for="profile_picture" class="block font-semibold mb-1">Profile Picture</label>
+<input type="file" id="profile_picture" name="profile_picture" accept="image/jpeg, image/png, image/gif"
+  class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-purple-600" required />
+<img id="profile_preview" alt="Profile Preview" class="mt-2 max-h-40 rounded-md hidden" />
+<div id="image_error" class="text-red-600 mt-1"></div>
+
+</div>
+
+  <!-- Full Name -->
+  <div>
+    <label for="full_name" class="block font-semibold mb-1">Full Name</label>
+    <input type="text" id="full_name" name="full_name" required
+      class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+  </div>
+
+  <!-- Date of Birth -->
+  <div>
+    <label for="dob" class="block font-semibold mb-1">Date of Birth</label>
+    <input type="date" id="dob" name="dob" required value="{{ dob or '' }}" 
+      class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+  </div>
+
+  <!-- Gender -->
+  <div>
+    <label class="block font-semibold mb-1">Gender</label>
+    <select id="gender" name="gender" required
+      class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600">
+      <option value="" disabled selected>Choose...</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
+
+
+
+  <!-- Email Address -->
+  <div>
+    <label for="email" class="block font-semibold mb-1">Email Address</label>
+    <input type="email" id="email" name="email" readonly value="{{ email }}"
+       class="w-full border border-gray-300 rounded-md p-3 bg-gray-100 cursor-not-allowed" />
+</div>
+
+<!-- Alternate email -->
+  <div>
+    <label for="alt_email" class="block font-semibold mb-1">Alternate Email</label>
+    <input type="email" id="alt_email" name="alt_email"
+      class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+  </div>
+
+  <!-- Phone Number -->
+  <div>
+    <label for="phone" class="block font-semibold mb-1">Phone Number</label>
+    <input type="tel" id="phone" name="phone" required
+     maxlength="10" minlength="10"
+  pattern="^\d{10}$"
+  title="Enter a valid phone number"
+  class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+
+
+  
+
+  <!-- Address Fields -->
+   <div>
+    <label for="street" class="block font-semibold mb-1">Your Address </label>
+    <textarea id="street" name="street" rows="3" required
+  class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600"></textarea>
+  <div>
+    <label for="city" class="block font-semibold mb-1">City</label>
+    <input type="text" id="city" name="city" required
+      class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+  </div>
+  <div>
+    <label for="state" class="block font-semibold mb-1">State / Province</label>
+    <input type="text" id="state" name="state" required
+      class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+  </div>
+  <div>
+    <label for="zip" class="block font-semibold mb-1">Zip / Postal Code</label>
+    <input type="text" id="zip" name="zip" required
+      class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+  </div>
+  <div>
+    <label for="country" class="block font-semibold mb-1">Country</label>
+    <select id="country" name="country" required
+      class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600">
+      <option value="" disabled selected>Select your country</option>
+      <option value="usa">United States</option>
+      <option value="canada">Canada</option>
+      <option value="uk">United Kingdom</option>
+      <option value="india">India</option>
+    
+    </select>
+  </div>
+
+  <!-- Role Selection -->
+  <div>
+    <label for="role" class="block font-semibold mb-1">Role</label>
+    <select id="role_display" disabled
+  class="w-full border border-gray-300 rounded-md p-3 bg-gray-100 ">
+  <option value="admin" {% if role == 'admin' %}selected{% endif %}>Admin</option>
+  <option value="teacher" {% if role == 'teacher' %}selected{% endif %}>Teacher</option>
+  <option value="student" {% if role == 'student' %}selected{% endif %}>Student</option>
+</select>
+
+
+<input type="hidden" id="role" name="role" value="{{ role }}">
+
+  </div>
+
+  <!-- Student Fields -->
+  <div id="student-fields" class="hidden space-y-4">
+
+    <div>
+      <label for="roll_number" class="block font-semibold mb-1">Roll Number</label>
+      <input type="text" id="roll_number" name="roll_no"
+        class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+    </div>
+
+    <div>
+      <label for="department_student" class="block font-semibold mb-1">Department / Branch</label>
+      <input type="text" id="department_student" name="department_student"
+        class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+    </div>
+
+    <div>
+      <label for="course" class="block font-semibold mb-1">Courses Enrolled</label>
+      <input type="text" id="course" name="course"
+        class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+    </div>
+
+    <div>
+      <label for="year_semester" class="block font-semibold mb-1">Semester</label>
+      <input type="text" id="year_semester" name="year_semester" placeholder="eg: 2nd Semester"
+        class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+    </div>
+    
+  </div>
+
+  <!-- Teacher Fields -->
+  <div id="teacher-fields" class="hidden space-y-4">
+    <div>
+      <label for="department_teacher" class="block font-semibold mb-1">Department / Subject</label>
+      <input type="text" id="department_teacher" name="department_teacher"
+        class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+    </div>
+
+    <div>
+      <label for="courses_handling" class="block font-semibold mb-1">Courses Handling (Subjects)</label>
+      <input type="text" id="courses_handling" name="courses_handling" placeholder="Type subjects separated by commas"
+  class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600"  />
+    </div>
+
+    <div>
+      <label for="designation" class="block font-semibold mb-1">Designation</label>
+      <input type="text" id="designation" name="designation"
+  class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600" />
+    </div>
+
+    <div>
+      <label for="experience" class="block font-semibold mb-1">Years of Experience</label>
+      <input type="number" id="experience" name="experience" min="0" max="100"
+        class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600"  />
+    </div>
+
+    <div>
+      <label for="qualifications" class="block font-semibold mb-1">Qualifications</label>
+      <input type="text" id="qualifications" name="qualifications" placeholder="e.g., M.Sc, Ph.D."
+        class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-purple-600"  />
+    </div>
+  </div>
+
+
+
+  <button type="submit"
+    class="w-full py-3 mt-6 bg-gradient-to-r from-purple-700 via-purple-900 to-purple-700 text-white rounded-md font-semibold text-lg hover:shadow-lg transition-shadow duration-300">
+    Save Profile
+  </button>
+
+  <div id="profile-message" class="mt-4 text-center text-red-600 font-semibold"></div>
+</form>
+
+  </main>
+
+  <!-- Footer -->
+  <footer id="contact" class="py-8 px-8 text-center bg-black/30 backdrop-blur-md">
+    <p class="mb-4">&copy; 2025 Testora. All rights reserved.</p>
+    <div class="flex justify-center space-x-8 mt-4 footer-social">
+      <!-- Facebook -->
+      <a href="https://facebook.com" target="_blank" class="hover:text-blue-500 transition" aria-label="Facebook">
+        <svg fill="currentColor" viewBox="0 0 24 24" class="w-7 h-7">
+          <path d="M22 12.07C22 6.49 17.52 2 12 2S2 6.49 2 12.07c0 5.02 3.66 9.18 8.44 9.93v-7.03H7.89v-2.9h2.55v-2.21c0-2.52 1.5-3.9 3.8-3.9 1.1 0 2.25.2 2.25.2v2.46h-1.27c-1.25 0-1.67.78-1.67 1.57v1.87h2.83l-.45 2.9h-2.38v7.03C18.34 21.25 22 17.09 22 12.07z"/>
+        </svg>
+      </a>
+      <!-- Instagram -->
+      <a href="https://instagram.com" target="_blank" class="hover:text-pink-500 transition" aria-label="Instagram">
+        <svg fill="currentColor" viewBox="0 0 24 24" class="w-7 h-7">
+          <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zm4.25 2.7a5.05 5.05 0 1 1 0 10.1 5.05 5.05 0 0 1 0-10.1zm0 1.5a3.55 3.55 0 1 0 0 7.1 3.55 3.55 0 0 0 0-7.1zm5.1.6a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+        </svg>
+      </a>
+      <!-- LinkedIn -->
+      <a href="https://linkedin.com" target="_blank" class="hover:text-blue-700 transition" aria-label="LinkedIn">
+        <svg fill="currentColor" viewBox="0 0 24 24" class="w-7 h-7">
+          <path d="M19 0h-14a5 5 0 0 0-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11.07 20h-2.87V9h2.87v11zm-1.43-12.26c-.92 0-1.66-.75-1.66-1.66 0-.92.75-1.66 1.66-1.66.92 0 1.66.75 1.66 1.66 0 .91-.75 1.66-1.66 1.66zm14.57 12.26h-2.87v-5.5c0-1.31-.02-3-1.87-3-1.87 0-2.16 1.46-2.16 2.89v5.61h-2.87V9h2.76v1.5h.04c.39-.75 1.39-1.55 2.88-1.55 3.08 0 3.65 2.03 3.65 4.67v6.38z"/>
+        </svg>
+      </a>
+    </div>
+  </footer>
+
+<script>
+function handleRoleChange() {
+  const role = document.getElementById('role').value;
+  const studentFields = document.getElementById('student-fields');
+  const teacherFields = document.getElementById('teacher-fields');
+
+
+  // Hide all role field containers
+  studentFields.classList.add('hidden');
+  teacherFields.classList.add('hidden');
+
+
+  // Helper to toggle required attribute for inputs inside a container
+  function toggleRequired(container, required) {
+    const inputs = container.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+      input.required = required;
+    });
+  }
+
+  // Show relevant fields and set required accordingly
+  if (role === 'student') {
+    studentFields.classList.remove('hidden');
+    toggleRequired(studentFields, true);
+    toggleRequired(teacherFields, false);
+  } else if (role === 'teacher') {
+    teacherFields.classList.remove('hidden');
+    toggleRequired(studentFields, false);
+    toggleRequired(teacherFields, true);
+  } else {
+    // Unknown role: no fields required or visible
+    toggleRequired(studentFields, false);
+    toggleRequired(teacherFields, false);
+  }
+}
+
+// Call on page load
+document.addEventListener('DOMContentLoaded', () => {
+  handleRoleChange();
+});
+
+
+  const profileInput = document.getElementById('profile_picture');
+const profilePreview = document.getElementById('profile_preview');
+const imageError = document.getElementById('image_error');
+
+const MAX_SIZE_MB = 2; // max file size 2MB
+const MAX_WIDTH = 1024; // optional max width px
+const MAX_HEIGHT = 1024; // optional max height px
+
+profileInput.addEventListener('change', function() {
+  imageError.textContent = '';
+  const file = this.files[0];
+  if (!file) {
+    profilePreview.src = '';
+    profilePreview.classList.add('hidden');
+    return;
+  }
+
+  // Check file type
+  const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+  if (!validTypes.includes(file.type)) {
+    imageError.textContent = 'Invalid file type. Please upload JPG, PNG, or GIF image.';
+    profileInput.value = '';
+    profilePreview.src = '';
+    profilePreview.classList.add('hidden');
+    return;
+  }
+
+  // Check file size
+  if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+    imageError.textContent = `File is too large. Maximum size allowed is ${MAX_SIZE_MB}MB.`;
+    profileInput.value = '';
+    profilePreview.src = '';
+    profilePreview.classList.add('hidden');
+    return;
+  }
+
+  // Check image dimensions (optional)
+  const img = new Image();
+  img.onload = function() {
+    if (img.width > MAX_WIDTH || img.height > MAX_HEIGHT) {
+      imageError.textContent = `Image dimensions too large. Max allowed: ${MAX_WIDTH}x${MAX_HEIGHT}px.`;
+      profileInput.value = '';
+      profilePreview.src = '';
+      profilePreview.classList.add('hidden');
+    } else {
+      // Show preview
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        profilePreview.src = e.target.result;
+        profilePreview.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  img.onerror = function() {
+    imageError.textContent = 'Invalid image file.';
+    profileInput.value = '';
+    profilePreview.src = '';
+    profilePreview.classList.add('hidden');
+  }
+  img.src = URL.createObjectURL(file);
+});
+
+const phoneInput = document.getElementById('phone');
+
+phoneInput.addEventListener('input', function() {
+  // Remove any non-digit characters
+  this.value = this.value.replace(/\D/g, '');
+
+  // Limit length to 10 digits
+  if (this.value.length > 10) {
+    this.value = this.value.slice(0, 10);
+  }
+});
+
+
+</script>
+  <script>
+    const form = document.getElementById('profile-form');
+    const messageDiv = document.getElementById('profile-message');
+
+    form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  messageDiv.textContent = '';
+  messageDiv.style.color = '';
+
+  const formData = new FormData(form);  // automatically collects inputs + files.
+   // Log formData entries here
+  for (let pair of formData.entries()) {
+    console.log(pair[0] + ': ' + pair[1]);
+  }
+
+  try {
+    const response = await fetch('/complete-profile', {
+      method: 'POST',
+      body: formData,   // send multipart/form-data
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      messageDiv.style.color = 'red';
+      messageDiv.textContent = data.error;
+    } else {
+      alert('Profile saved successfully');
+      let redirectUrl = '/student/dashboard';  // default
+      if (data.role === 'admin') {
+        redirectUrl = '/admin/dashboard';
+      } else if (data.role === 'teacher') {
+        redirectUrl = '/teacher/dashboard';
+      }
+      window.location.href = redirectUrl;
+    }
+  } catch (err) {
+    messageDiv.style.color = 'red';
+    messageDiv.textContent = 'Failed to save profile. Please try again.';
+  }
+});
+
+  </script>
+</body>
+</html>
